@@ -1,0 +1,26 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+
+{% block template %}
+
+<center>
+<h1>Add in Daily Caloric Change</h1>
+<br></br>
+{% if submitted %}
+    Your Daily Caloric Intake Was Submitted Succefully
+{% else %}
+    <form action="" method=POST>
+        {% csrf_token%}
+
+        {{ form.as_p }}
+
+        <input type="submit" value="Submit">
+    </form>
+{% endif%}
+
+
+</center>
+
+
+{% endblock %}
