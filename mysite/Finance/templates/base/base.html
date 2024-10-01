@@ -12,37 +12,39 @@
 <body>
     <div class="wrapper" id="wrapper">
         <div class="sidebar" id="sidebar-wrapper">
-            <div class="center"><img src="{% static 'Assets\IMG_7070_transparent.png' %}" class="logo" id="Logo" alt="Logo"></div>
-            <div class="sidebar-heading" id="Main_name"><b>Ryan Bonanni-Bott</b></div>
-            <ul class="menu" id="menu_open">
-                <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\dashboard2.svg' %}" class="icon"> <b>Dashboard</b></a></li>
-                <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\health.svg' %}" class="icon"> <b>Health</b></a></li>
-                <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\finance.svg' %}" class="icon"> <b>Finance</b></a></li>
-                <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\todo.svg' %}" class="icon"><b>TodoLists</b></a></li>
-                <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\calender.svg' %}" class="icon"> <b>Calender</b></a></li>
-            </ul>
-            <ul class="menu_hidden" id="menu_collapsed">
-                <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\dashboard2.svg' %}" class="icon"></a></li>
-                <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\health.svg' %}" class="icon"></a></li>
-                <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\finance.svg' %}" class="icon"></a></li>
-                <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\todo.svg' %}" class="icon"></a></li>
-                <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\calender.svg' %}" class="icon"></a></li>
-            </ul>
+            <div class=""sidebar_child>
+                <div class="center"><img src="{% static 'Assets\IMG_7070_transparent.png' %}" class="logo" id="Logo" alt="Logo"></div>
+                <div class="sidebar-heading" id="Main_name"><b>Ryan Bonanni-Bott</b></div>
+                <ul class="menu_hidden" id="menu_open">
+                    <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\dashboard2.svg' %}" class="icon"> <b>Dashboard</b></a></li>
+                    <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\health.svg' %}" class="icon"> <b>Health</b></a></li>
+                    <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\finance.svg' %}" class="icon"> <b>Finance</b></a></li>
+                    <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\todo.svg' %}" class="icon"><b>TodoLists</b></a></li>
+                    <li><a href="#" class="menu-item"><img src="{% static 'Assets\SVG\calender.svg' %}" class="icon"> <b>Calender</b></a></li>
+                </ul>
+                <ul class="menu" id="menu_collapsed">
+                    <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\dashboard2.svg' %}" class="icon"></a></li>
+                    <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\health.svg' %}" class="icon"></a></li>
+                    <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\finance.svg' %}" class="icon"></a></li>
+                    <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\todo.svg' %}" class="icon"></a></li>
+                    <li><a href="#" class="menu-item" id="Icon"><img src="{% static 'Assets\SVG\calender.svg' %}" class="icon"></a></li>
+                </ul>
+            </div>
+            <div class=""sidebar_child>
+                <div class="navbar">
+                    <div id="open_menu" class="open-menu">
+                        <button class="toggle-btn" id="menu-toggle"><img src = "{% static 'Assets\SVG\openmenu.svg' %}"></button>
+                    </div>
+                    <div id="close_menu" class="close-menu">
+                        <button class="toggle-btn" id="menu-toggle2"><img src = "{% static 'Assets\SVG\closemenu.svg' %}"></button>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
         <div class="main-content" id="page-content-wrapper">
-            <div class="navbar">
-                <div id="open_menu" class="open-menu">
-                    <button class="toggle-btn" id="menu-toggle"><img src = "{% static 'Assets\SVG\closemenu.svg' %}"></button>
-                </div>
-                <div id="close_menu" class="close-menu">
-                    <button class="toggle-btn" id="menu-toggle2"><img src = "{% static 'Assets\SVG\openmenu.svg' %}"></button>
-                </div>
-            </div>
-            <div class="content">
-                <!--Will be location of script content-->
-                
+            
                 {% block template %}
                 {% endblock %}
 

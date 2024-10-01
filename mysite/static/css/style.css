@@ -6,6 +6,7 @@ CSS for whole website
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    background-color: #1c242c;
 }
 
 .wrapper {
@@ -15,7 +16,7 @@ body {
 /*Will not the only code in the base template for subtemplate*/
 .main-content {
     flex: 1;
-    background: #f8f9fa;
+    background: #1c242c;
     transition: margin-left .5s;}
 .content {
     margin: 3%;
@@ -26,8 +27,10 @@ body {
 Css for sidebar
 --------------------------*/
 .sidebar {
-    width: 180px;
-    height: 100vh;
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background-color: #1c242c;
     color: white;
     transition: width 0.3s;
