@@ -33,7 +33,12 @@
 
         <div class="main-content" id="page-content-wrapper">
             <div class="navbar">
-                <button class="toggle-btn" id="menu-toggle"><img src = "{% static 'Assets\SVG\menu.svg' %}"></button>
+                <div id="open_menu" class="open-menu">
+                    <button class="toggle-btn" id="menu-toggle"><img src = "{% static 'Assets\SVG\closemenu.svg' %}"></button>
+                </div>
+                <div id="close_menu" class="close-menu">
+                    <button class="toggle-btn" id="menu-toggle2"><img src = "{% static 'Assets\SVG\openmenu.svg' %}"></button>
+                </div>
             </div>
             <div class="content">
                 <!--Will be location of script content-->

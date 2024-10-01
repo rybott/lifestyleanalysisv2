@@ -4,11 +4,32 @@ document.getElementById('menu-toggle').addEventListener('click', function() {
     const menu = document.getElementById('menu_open');
     const menu_hidden = document.getElementById('menu_collapsed');
     const name1 = document.getElementById('Main_name');
+    const open_menu = document.getElementById('open_menu');
+    const close_menu = document.getElementById('close_menu');
     sidebar.classList.toggle('collapsed');
     icons.classList.toggle('collapsed');
     menu.classList.toggle('collapsed');
     menu_hidden.classList.toggle('collapsed');
     name1.classList.toggle('collapsed');
+    open_menu.classList.toggle('collapsed');
+    close_menu.classList.toggle('collapsed');
+});
+
+document.getElementById('menu-toggle2').addEventListener('click', function() {
+    const sidebar = document.getElementById('sidebar-wrapper');
+    const icons = document.getElementById('Icon');
+    const menu = document.getElementById('menu_open');
+    const menu_hidden = document.getElementById('menu_collapsed');
+    const name1 = document.getElementById('Main_name');
+    const open_menu = document.getElementById('open_menu');
+    const close_menu = document.getElementById('close_menu');
+    sidebar.classList.remove('collapsed');
+    icons.classList.remove('collapsed');
+    menu.classList.remove('collapsed');
+    menu_hidden.classList.remove('collapsed');
+    name1.classList.remove('collapsed');
+    open_menu.classList.remove('collapsed');
+    close_menu.classList.remove('collapsed');
 });
 
 const menuLinks = document.querySelectorAll('.menu-item');
@@ -20,15 +41,16 @@ menuLinks.forEach(link => {
         const menu = document.getElementById('menu_open');
         const menu_hidden = document.getElementById('menu_collapsed');
         const name1 = document.getElementById('Main_name');
+        const open_menu = document.getElementById('open_menu');
+        const close_menu = document.getElementById('close_menu');
         sidebar.classList.remove('collapsed');
         mainContent.classList.remove('collapsed');
         menu.classList.remove('collapsed');
         menu_hidden.classList.remove('collapsed');
         name1.classList.remove('collapsed');
-        
-        // Here you would add logic to navigate to the correct page
-        // For demonstration, just log the clicked menu item
-        console.log(`Navigating to: ${link.textContent.trim()}`);
+        open_menu.classList.remove('collapsed');
+        close_menu.classList.remove('collapsed');
+       
     });
 });
 
