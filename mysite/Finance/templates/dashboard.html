@@ -5,11 +5,41 @@
 {% block template %}
 
 
+<form id="filter-form" method="GET">
+    <label for="category-name">Category Name:</label>
+    <select id="category-name" name="Category_name">
+        <option value="">All Categories</option>
+        <!-- Options will be populated dynamically -->
+    </select>
+
+    <label for="start-date">Start Date:</label>
+    <input type="date" id="start-date" name="start_date">
+
+    <label for="end-date">End Date:</label>
+    <input type="date" id="end-date" name="end_date">
+
+    <button type="submit">Filter</button>
+</form>
+
+<script>
+    // Fetch category names and populate the drop-down
+    fetch('/finance/api/category_names')
+        .then(response => response.json())
+        .then(data => {
+            const categorySelect = document.getElementById('category-name');
+            
+            // Populate dropdown options with category names
+            data.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;  // Option value is the category name
+                option.text = category;   // Option label is the category name
+                categorySelect.add(option);
+            });
+        });
+</script>
 
 
-
-
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
 {% endblock %}
