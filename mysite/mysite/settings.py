@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'Finance',
     'Health',
     'Admin',
+    'bootstrap5'
 ]
 
 MIDDLEWARE = [

@@ -42,18 +42,3 @@ menuLinks.forEach(link => {
     });
 });
 
-function adjustDivWidth() {
-    const container = document.getElementById('sidebar-wrapper');
-    const resizeLogo = document.getElementById('Logo');
-    const resizeName = document.getElementById('Main_name')
-    const containerWidth = container.offsetWidth;
-    if (containerWidth < 100){
-        resizeLogo.style.width = '100%';
-        resizeName.style.display = 'none'}
-    else{resizeLogo.style.width = '50%'; resizeName.style.display = 'block' }
-    }
-
-const container = document.getElementById('sidebar-wrapper');
-const observer = new ResizeObserver(adjustDivWidth);
-observer.observe(container);
-adjustDivWidth();

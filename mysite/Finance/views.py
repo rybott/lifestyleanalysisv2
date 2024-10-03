@@ -19,6 +19,17 @@ def dashboard(request):
 
     return render(request,'dashboard.html',context)
 
+def dashboard2(request):
+    context = {}
+    if request.method == 'GET':
+        context['selected_category'] = request.GET.get('Category_name', 'All Categories')
+        context['selected_start_date'] = request.GET.get('start_date', '')
+        context['selected_end_date'] = request.GET.get('end_date', '')
+        context['exlude_nocount'] = 'checked' if request.GET.get('exlude_nocount') == 'on' else ''
+    
+
+    return render(request,'base/base.html',context)
+
 def categorize(request):
     return render(request,'categorize.html',{})
 

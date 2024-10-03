@@ -2,20 +2,16 @@
 
 CSS for whole website
 --------------------------*/
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     background-color: #202838;
 }
 
-.flex_wrapper {
-    display: flex;
-    flex-direction: row;
-}
-
 .sidebar {
     position: fixed;
-    width: 5vw;
+    width: 7vw;
     height: 100vh;
     overflow-x: hidden;
 
@@ -29,44 +25,35 @@ body {
     color: white;
     transition: width 0.3s;
     text-align: center;
+    border: #000 thin solid
 }
 
+
 .sidebar_child_logo{
-    display: flex;
-    flex-shrink: 1;
-    justify-content: center;
+    border: #fff thin solid;
 }
 .logo{
     background: #1c242c;
-    max-width: 5vw;
+    width: 100%;
 }
 
 .sidebar_child_menu{
+    border: #fff thin solid;
     display: flex;
     flex-direction: column; 
-    align-items: center;
     width: 100%;
+    text-decoration: none;
     color: white;
-}
-.menu{
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    padding-right: 0;
 }
 .menu, .menu_text{
     list-style-type: none;
+    width: 100%;  /* Ensures the ul takes full width of its parent */
     padding: 0;
 }
 .menu_text{
     display: none;
 }
-.menu li{
-    align-items: center;
-}
 .menu a{
-    align-items: center;
     list-style-type: none;
     text-decoration: none;
     color: white;
@@ -79,7 +66,8 @@ body {
     justify-content: flex-start; 
     text-decoration: none;
     color: white;
-    width: auto;}
+    width: 100%;
+    text:}
 
 .menu_text a img {
         margin-right: 1vw;
@@ -90,6 +78,10 @@ body {
     color: #ccc; 
 }
 
+
+
+
+
 .menu a:hover, .menu_text a:hover {
     text-decoration: none; 
 }
@@ -97,20 +89,14 @@ body {
 .menu li, .menu_text li{
     padding: 15% 0;
 }
-.menu_text li{
-    margin-right: 1vw;
-}
 
 
 .sidebar_child_button{
+    border: #fff thin solid;
     margin-bottom: 40%;
     margin-top: auto;
     display: flex;
     justify-content: center;
-}
-.sidebar_child_button button{
-    background-color: #1c242c;
-    border: none;
 }
 .toggle-btn-open {
     display: none;
@@ -131,6 +117,6 @@ body {
     text-align: center;
 }
 .sidebar.expanded {
-    width: auto; /* Wider sidebar to fit the text */
+    width: 20vw; /* Wider sidebar to fit the text */
     transition: width 0.3s ease; /* Smooth transition when expanding */
 }
