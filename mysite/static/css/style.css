@@ -36,13 +36,12 @@ body {
     margin: 1%;
     width: 5vw;
     height: 100vh;
-    overflow-x: hidden; }
+    overflow-x: hidden;}
 
 .sidebar_child_logo{
     display: flex;
     flex-shrink: 1;
-    justify-content: center;
-}
+    justify-content: center;}
 .logo{
     background: #1c242c;
     max-width: 5vw;
@@ -142,3 +141,4 @@ body {
     transition: width 0.3s ease;
     position: absolute;  
 }
+

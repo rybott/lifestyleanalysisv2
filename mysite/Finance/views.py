@@ -17,7 +17,7 @@ def dashboard(request):
         context['exlude_nocount'] = 'checked' if request.GET.get('exlude_nocount') == 'on' else ''
     
 
-    return render(request,'dashboard.html',context)
+    return render(request,'base/base.html',context)
 
 def dashboard2(request):
     context = {}
@@ -28,7 +28,7 @@ def dashboard2(request):
         context['exlude_nocount'] = 'checked' if request.GET.get('exlude_nocount') == 'on' else ''
     
 
-    return render(request,'base/base.html',context)
+    return render(request,'dashboard v2.html',context)
 
 def categorize(request):
     return render(request,'categorize.html',{})
