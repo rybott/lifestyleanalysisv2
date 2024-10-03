@@ -11,9 +11,15 @@
 </head>
 <body>
     <div class="flex_wrapper">
+        <div class="sidebar_buffer">
+        </div>
+        <div class="template_content">
+                {% block template %}
+                {% endblock %}
+        </div>
         <div class="sidebar">
             <div class ="sidebar_child_logo">
-                <div .logo"><img src="{% static 'Assets\IMG_7070_transparent.png' %}" class="logo" id="Logo" alt="Logo"></div>
+                <div class = "logo"><img src="{% static 'Assets\IMG_7070_transparent.png' %}" class="logo" id="Logo" alt="Logo"></div>
             </div>
             <div class ="sidebar_child_menu">
                 <ul class="menu_text" id="open_menu">
@@ -35,11 +41,6 @@
                     <button class="toggle-btn-close" id="menu-toggle"><img src = "{% static 'Assets\SVG\openmenu.svg' %}"></button>
                     <button class="toggle-btn-open" id="menu-toggle2"><img src = "{% static 'Assets\SVG\closemenu.svg' %}"></button>
             </div>
-        </div>
-
-        <div class="template_content">
-            {% block template %}
-            {% endblock %}
         </div>
     </div> 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>

@@ -18,6 +18,7 @@ body {
     width: 5vw;
     height: 100vh;
     overflow-x: hidden;
+    left: 0;
 
     margin: 1%;
     border-radius: 20px;
@@ -30,6 +31,12 @@ body {
     transition: width 0.3s;
     text-align: center;
 }
+
+.sidebar_buffer {
+    margin: 1%;
+    width: 5vw;
+    height: 100vh;
+    overflow-x: hidden; }
 
 .sidebar_child_logo{
     display: flex;
@@ -131,6 +138,7 @@ body {
     text-align: center;
 }
 .sidebar.expanded {
-    width: auto; /* Wider sidebar to fit the text */
-    transition: width 0.3s ease; /* Smooth transition when expanding */
+    width: auto; 
+    transition: width 0.3s ease;
+    position: absolute;  
 }
