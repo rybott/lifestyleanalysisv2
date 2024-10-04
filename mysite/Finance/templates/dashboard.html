@@ -36,7 +36,8 @@
         column-gap: 16px;
     }
     
-    .toggle-container {
+    .toggle-container{
+        background-color: #ccc;
         position: absolute; /* Adjust this to 'absolute' if the button should stay in the context of the header */
         right: -5px; /* Adjust position as needed */
         top: 40px;
@@ -57,13 +58,13 @@
         right: 0; /* Align the form to the right edge of the toggle-container */
         top: 45px; /* Position below the button */
         padding: 20px;
-        background-color: #f9f9f9;
         border: 1px solid #ccc;
         border-radius: 10px;
         width: 300px; /* Fixed width */
         box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Optional: adds shadow for better visibility */
     }
     
+
     .form-container.active {
         display: block; /* Show when active */
     }
@@ -123,7 +124,7 @@
         </button>
       
         <!-- The form to be toggled -->
-        <div id="form-container" class="form-container hidden">
+        <div id="form-container" class="form-container-hidden">
           <form id="filter-form" method="GET">
             <label for="category-name">Category Name:</label>
             <select id="category-name" name="Category_name" value="All Categories">

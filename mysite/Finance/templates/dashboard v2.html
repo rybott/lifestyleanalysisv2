@@ -4,25 +4,10 @@
 {% block template %}
 
 <style>
-
-
+    
 
     
-    .toggle-container {
-        position: absolute; /* Adjust this to 'absolute' if the button should stay in the context of the header */
-        right: -5px; /* Adjust position as needed */
-        top: 40px;
-        z-index: 10; /* Ensures the button and form are above other content */
-    }
-    
-    .toggle-button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 10px;
-        position: static; /* Keep this 'static' if no need to fix the button position when scrolling */
-    }
-    
+
     .form-container {
         display: none; /* Start hidden and toggle visibility */
         position: absolute;
@@ -35,6 +20,7 @@
     }
     
     .form-container.active {
+        background-color: #c0c1c4;
         display: block; /* Show when active */
     }
     
@@ -49,6 +35,12 @@
         border: 1px solid #ccc;
         font-size: 15px;
         width: 95%; /* Ensures inputs take full width of the form */
+    }
+
+    .toggle-button{
+        border: none;
+        background-color: #a78f21;
+        border-radius: 15%;
     }
     
     button[type="submit"] {
@@ -66,106 +58,161 @@
         background-color: #0056b3;
     }
     
+    .header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 1%;
+        background-color: #1c242c;
+        border-radius: 20px;
+        color: white;
+        align-items: flex-end;
+        padding: 0% 2% 1% 2%;
+    }
+
+    .title{
+        font-size: x-large;}
+    .filtered{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;}
+    .category{
+        font-size: large;
+    }
+    .dates{
+        display: flex;
+        flex-direction: row;
+        column-gap: 1vw;
+        }
+    .dates p{
+        margin: 0;
+    }
+
     
-    </style>
+
+    
+</style>
         
-    <body>
-        <div class="header">
-            <div class="title">Dashboard</div>
-            <div class="filtered">
-                <div class="category">{{ selected_category }}</div>
-                <div class="dates">
-                    <p><i>{{ selected_start_date }}<i></p>
-                    <p><i>{{ selected_end_date }}<i></p>
-                </div>
+<body>
+    <div class="header">
+        <div class="title"><b></b>Dashboard<b></b></div>
+        <div class="filtered">
+            <div class="category">{{ selected_category }}</div>
+            <div class="dates">
+                <p><i>{{ selected_start_date }}<i></p>
+                <p><i>{{ selected_end_date }}<i></p>
             </div>
-            <div class="filter_menu">
-                <div class="toggle-container">
-                    <!-- SVG button to toggle the filter menu -->
-                    <button id="toggle-button" class="toggle-button">
-                    <!-- Replace this with your own SVG -->
-                    <img src="{% static 'Assets/SVG/Filter.svg' %}" alt="Filter">
-                    </button>
-                
-                    <!-- The form to be toggled -->
-                    <div id="form-container" class="form-container hidden">
-                    <form id="filter-form" method="GET">
-                        <label for="category-name">Category Name:</label>
-                        <select id="category-name" name="Category_name" value="All Categories">
-                            <option value="">All Categories</option>
-                            {% for category in category_names %}
-                            <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
-                            {% endfor %}
-                        </select>
-                
-                        <label for="start-date">From:</label>
-                        <input type="date" id="start-date" name="start_date" value="{{ selected_start_date }}">>
-                
-                        <label for="end-date">Until:</label>
-                        <input type="date" id="end-date" name="end_date" value="{{ selected_end_date }}">
-                
-                        <label for="exlude_nocount">"Do Not Count"</label>
-                        <input type="checkbox" id="exlude-nocount" name="exlude_nocount" {{ exlude_nocount }}>
-                
-                        <button type="submit">Filter</button>
-                    </form>
-                    </div>
+        </div>
+        <div class="filter_menu">
+            <div class="toggle-container">
+                <!-- SVG button to toggle the filter menu -->
+                <button id="toggle-button" class="toggle-button">
+                <!-- Replace this with your own SVG -->
+                <img src="{% static 'Assets/SVG/Filter.svg' %}" alt="Filter">
+                </button>
+            
+                <!-- The form to be toggled -->
+                <div id="form-container" class="form-container hidden">
+                <form id="filter-form" method="GET">
+                    <label for="category-name">Category Name:</label>
+                    <select id="category-name" name="Category_name" value="All Categories">
+                        <option value="">All Categories</option>
+                        {% for category in category_names %}
+                        <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
+                        {% endfor %}
+                    </select>
+            
+                    <label for="start-date">From:</label>
+                    <input type="date" id="start-date" name="start_date" value="{{ selected_start_date }}">>
+            
+                    <label for="end-date">Until:</label>
+                    <input type="date" id="end-date" name="end_date" value="{{ selected_end_date }}">
+            
+                    <label for="exlude_nocount">"Do Not Count"</label>
+                    <input type="checkbox" id="exlude-nocount" name="exlude_nocount" {{ exlude_nocount }}>
+            
+                    <button type="submit">Filter</button>
+                </form>
                 </div>
             </div>
         </div>
-    
-    
-    
     </div>
+    <div class="Grid_toprow"> 
+        <div id="TopRowChild" class="totalspentmade"></div>
+            <h4>Current Period Spending</h4>
+            <div>Amount Made $xxx</div>
+            <p>Amount Spent $xxx</p>
+        <div id="TopRowChild" class="thisweeklastweek"></div>
+            <h>Weekly Spending Comparison</h>
+            <p>Amount Spent This Week $xxx</p>
+            <p>Amount Spend Last Weel $xxx</p>
+            <p>10% Reduction</p>
+        <div id="TopRowChild" class="mothlydue"></div>
+            <h4>Next 5 Recurring Payments</h4>
+            <p>$xxx Due (dte) for xxx</p>
+            <p>$xxx Due (dte) for xxx</p>
+            <p>$xxx Due (dte) for xxx</p>
+            <p>$xxx Due (dte) for xxx</p>
+            <p>$xxx Due (dte) for xxx</p>
+    </div>
+    <div class="Grid_charts">
+        <div class="TopExpenses"></div>
+        <div class="TopTransactions"></div>
+        <div class="ExpPiechart"></div>
+        <div class="Overtime"></div>
+        <budget class="Budget"></budget>
+    </div>
+</body>
     
-    <script>
-        // Fetch category names and populate the drop-down
-        fetch('/finance/api/category_names')
-            .then(response => response.json())
-            .then(data => {
-                const categorySelect = document.getElementById('category-name');
-                
-                // Populate dropdown options with category names
-                data.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category;  // Option value is the category name
-                    option.text = category;   // Option label is the category name
-                    categorySelect.add(option);
-                });
+<script>
+    // Fetch category names and populate the drop-down
+    fetch('/finance/api/category_names')
+        .then(response => response.json())
+        .then(data => {
+            const categorySelect = document.getElementById('category-name');
+            
+            // Populate dropdown options with category names
+            data.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;  // Option value is the category name
+                option.text = category;   // Option label is the category name
+                categorySelect.add(option);
             });
-    
-        document.getElementById('filter-form').addEventListener('change', () => {
-            // Update display dynamically
-            const category = document.getElementById('category-name').value;
-            const startDate = document.getElementById('start-date').value;
-            const endDate = document.getElementById('end-date').value;
-            const excludeNocount = document.getElementById('exlude-nocount').checked ? 'checked' : '';
-        
-            const categoryDisplay = category ? category : 'All Categories';
-    
-            document.querySelector('.filter-display').innerHTML = `
-                <p>Category: ${categoryDisplay}</p>
-                <p>From: ${startDate}</p>
-                <p>Until: ${endDate}</p>
-                <p>Excluded Do Not Count: ${excludeNocount}</p>
-            `;
         });
+
+    document.getElementById('filter-form').addEventListener('change', () => {
+        // Update display dynamically
+        const category = document.getElementById('category-name').value;
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+        const excludeNocount = document.getElementById('exlude-nocount').checked ? 'checked' : '';
     
-        // Get references to the button and form container
-        const toggleButton = document.getElementById('toggle-button');
-        const formContainer = document.getElementById('form-container');
-    
-        // Add click event listener to toggle the form visibility
-        toggleButton.addEventListener('click', () => {
-        formContainer.classList.toggle('active');
-        });
-    </script>
+        const categoryDisplay = category ? category : 'All Categories';
+
+        document.querySelector('.filter-display').innerHTML = `
+            <p>Category: ${categoryDisplay}</p>
+            <p>From: ${startDate}</p>
+            <p>Until: ${endDate}</p>
+            <p>Excluded Do Not Count: ${excludeNocount}</p>
+        `;
+    });
+
+    // Get references to the button and form container
+    const toggleButton = document.getElementById('toggle-button');
+    const formContainer = document.getElementById('form-container');
+
+    // Add click event listener to toggle the form visibility
+    toggleButton.addEventListener('click', () => {
+    formContainer.classList.toggle('active');
+    });
+</script>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-</body>
+
 
 {% endblock %}
