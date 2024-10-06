@@ -1,99 +1,13 @@
 {% extends "base/base.html" %}
 {% load static %}
 
+{% block extra_css %}
+    <!-- Additional stylesheet specific to this page -->
+    <link rel="stylesheet" href="{% static 'css/finance_dashboard.css' %}">
+{% endblock %}
+
 {% block template %}
-
-<style>
-    
-
-    
-
-    .form-container {
-        display: none; /* Start hidden and toggle visibility */
-        position: absolute;
-        right: 0; /* Align the form to the right edge of the toggle-container */
-        top: 45px; /* Position below the button */
-        padding: 20px;
-        border-radius: 10px;
-        width: 300px; /* Fixed width */
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Optional: adds shadow for better visibility */
-    }
-    
-    .form-container.active {
-        background-color: #c0c1c4;
-        display: block; /* Show when active */
-    }
-    
-    label {
-        font-weight: bold;
-    }
-    
-    input[type="date"], select {
-        padding: 10px;
-        margin: 15px;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        font-size: 15px;
-        width: 95%; /* Ensures inputs take full width of the form */
-    }
-
-    .toggle-button{
-        border: none;
-        background-color: #a78f21;
-        border-radius: 15%;
-    }
-    
-    button[type="submit"] {
-        background-color: #007bff;
-        color: white;
-        margin-top: 10px;
-        font-size: 20px;
-        width: 100%; /* Full width button */
-        border: none;
-        border-radius: 10px;
-        padding: 10px /* Padding for better touch */
-    }
-    
-    button[type="submit"]:hover {
-        background-color: #0056b3;
-    }
-    
-    .header{
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        margin: 1%;
-        background-color: #1c242c;
-        border-radius: 20px;
-        color: white;
-        align-items: flex-end;
-        padding: 0% 2% 1% 2%;
-    }
-
-    .title{
-        font-size: x-large;}
-    .filtered{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-end;}
-    .category{
-        font-size: large;
-    }
-    .dates{
-        display: flex;
-        flex-direction: row;
-        column-gap: 1vw;
-        }
-    .dates p{
-        margin: 0;
-    }
-
-    
-
-    
-</style>
-        
+  
 <body>
     <div class="header">
         <div class="title"><b></b>Dashboard<b></b></div>
@@ -111,6 +25,11 @@
                 <!-- Replace this with your own SVG -->
                 <img src="{% static 'Assets/SVG/Filter.svg' %}" alt="Filter">
                 </button>
+
+                <button id="toggle-button2" class="toggle-button2">
+                    <!-- Replace this with your own SVG -->
+                    <img src="{% static 'Assets/SVG/Filter.svg' %}" alt="Filter">
+                    </button>
             
                 <!-- The form to be toggled -->
                 <div id="form-container" class="form-container hidden">
@@ -139,22 +58,27 @@
         </div>
     </div>
     <div class="Grid_toprow"> 
-        <div id="TopRowChild" class="totalspentmade"></div>
-            <h4>Current Period Spending</h4>
-            <div>Amount Made $xxx</div>
+        <div id="TopRowChild" class="totalspentmade">
+            <h5>Current Period Spending</h5>
+            <p>Amount Made $xxx</p>
             <p>Amount Spent $xxx</p>
-        <div id="TopRowChild" class="thisweeklastweek"></div>
-            <h>Weekly Spending Comparison</h>
+        </div>
+        <div id="TopRowChild" class="thisweeklastweek">
+            <h5>Weekly Spending Comparison</h5>
             <p>Amount Spent This Week $xxx</p>
             <p>Amount Spend Last Weel $xxx</p>
             <p>10% Reduction</p>
-        <div id="TopRowChild" class="mothlydue"></div>
-            <h4>Next 5 Recurring Payments</h4>
-            <p>$xxx Due (dte) for xxx</p>
-            <p>$xxx Due (dte) for xxx</p>
-            <p>$xxx Due (dte) for xxx</p>
-            <p>$xxx Due (dte) for xxx</p>
-            <p>$xxx Due (dte) for xxx</p>
+        </div>
+        <div id="TopRowChild" class="monthlydue">
+            <h5>Next 5 Recurring Payments</h5>
+            <div class="dueexp">
+                <p>$xxx Due (dte) for xxx</p>
+                <p>$xxx Due (dte) for xxx</p>
+                <p>$xxx Due (dte) for xxx</p>
+                <p>$xxx Due (dte) for xxx</p>
+                <p>$xxx Due (dte) for xxx</p>
+            </div>
+        </div>
     </div>
     <div class="Grid_charts">
         <div class="TopExpenses"></div>

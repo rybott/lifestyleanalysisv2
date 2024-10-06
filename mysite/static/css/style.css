@@ -22,7 +22,7 @@ body {
     left: 0;
 
     margin: 1%;
-    border-radius: 20px;
+    border-radius: clamp(8px, 8px, 20px);
 
     display: flex;
     flex-direction: column;
@@ -45,8 +45,9 @@ body {
     flex-shrink: 1;
     justify-content: center;}
 .logo{
+    padding-top: 5%;
     background: #1c242c;
-    max-width: 5vw;
+    max-width: 100%;
 }
 
 .sidebar_child_menu{
@@ -74,10 +75,16 @@ body {
     align-items: center;
 }
 .menu a{
+    max-width: 100%;
     align-items: center;
     list-style-type: none;
     text-decoration: none;
     color: white;
+}
+
+.menu a img{
+    width: 100%; /* Fill the width of the parent */
+    height: auto; 
 }
 .menu_text a{
     list-style-type: none;
@@ -138,6 +145,10 @@ body {
     display: block;
     text-align: center;
 }
+
+#Logo.collapsed{
+    max-width: 10%;
+}
 .sidebar.expanded {
     width: auto; 
     transition: width 0.3s ease;
@@ -151,4 +162,42 @@ body {
 
 .flex_wrapper{
     background-color: #202838;
+}
+
+/*
+Media Queries
+------------------------------------
+*/
+
+
+
+/*Big Ass Screens 3840*2160 */
+@media screen and (min-width: 480px) {
+
+  }
+
+/*Computers 1440*900  */
+
+
+/*Ipads 1024*1366  */
+
+@media screen and (max-width: 1100px) {
+    .sidebar {
+        position: fixed;
+        width: 10vw;}
+    .sidebar_buffer {
+        width: 10vw;}
+}
+
+
+/*Phones <450 width */
+
+@media screen and (max-width: 450px) {
+    .sidebar {
+        position: fixed;
+        width: 10vw;}
+    .sidebar_buffer {
+        width: 10vw;}
+    .menu a img{
+        max-width: 85%;}
 }

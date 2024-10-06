@@ -3,7 +3,7 @@ from . import views
 from . import apis
 
 urlpatterns = [
-    path('base', views.dashboard, name="home"),
+    path('base', views.base_testing, name="home"),
     path('', views.dashboard2, name="home"),
     path('categorize', views.categorize, name="categorize"),
     path('api/category_names/', apis.category_names, name='category-names'),

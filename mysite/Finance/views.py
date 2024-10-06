@@ -8,7 +8,7 @@ from datetime import timedelta, date
 import calendar
 from .apis import category_names
 
-def dashboard(request):
+def base_testing(request):
     context = {}
     if request.method == 'GET':
         context['selected_category'] = request.GET.get('Category_name', 'All Categories')

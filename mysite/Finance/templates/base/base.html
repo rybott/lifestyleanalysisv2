@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <div class="flex_wrapper">
@@ -19,7 +19,7 @@
         </div>
         <div class="sidebar">
             <div class ="sidebar_child_logo">
-                <div class = "logo"><img src="{% static 'Assets\IMG_7070_transparent.png' %}" class="logo" id="Logo" alt="Logo"></div>
+                <div><img src="{% static 'Assets\IMG_7070_transparent.png' %}" class="logo" id="Logo" alt="Logo"></div>
             </div>
             <div class ="sidebar_child_menu">
                 <ul class="menu_text" id="open_menu">
@@ -45,5 +45,6 @@
     </div> 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="{% static 'js/scripts.js' %}"></script> 
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

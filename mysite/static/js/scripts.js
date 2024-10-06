@@ -3,11 +3,13 @@ document.getElementById('menu-toggle').addEventListener('click', function() {
     const close_menu = document.getElementById('close_menu');
     const toggle_open= document.getElementById('menu-toggle');
     const toggle_close= document.getElementById('menu-toggle2');
+    const logo= document.getElementById('Logo');
     const sidebar = document.querySelector('.sidebar');
     open_menu.classList.toggle('collapsed');
     close_menu.classList.toggle('collapsed');
     toggle_open.classList.toggle('collapsed');
     toggle_close.classList.toggle('collapsed');
+    logo.classList.toggle('collapsed');
     sidebar.classList.toggle('expanded');
 });
 
@@ -16,11 +18,13 @@ document.getElementById('menu-toggle2').addEventListener('click', function() {
     const close_menu = document.getElementById('close_menu');
     const toggle_open= document.getElementById('menu-toggle');
     const toggle_close= document.getElementById('menu-toggle2');
+    const logo= document.getElementById('Logo');
     const sidebar = document.querySelector('.sidebar');
     open_menu.classList.remove('collapsed');
     close_menu.classList.remove('collapsed');
     toggle_open.classList.remove('collapsed');
     toggle_close.classList.remove('collapsed');
+    logo.classList.remove('collapsed');
     sidebar.classList.remove('expanded');
 });
 
