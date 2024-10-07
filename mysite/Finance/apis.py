@@ -146,8 +146,37 @@ def weekly_expenses(request):
 
     return JsonResponse(data, safe=False)
 
+def top_expenses(request):
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    exlude_nocount = request.GET.get('exclude_nocount', False)
 
+    if not start_date:
+        one_year_ago = datetime.now() - timedelta(days=365)
+        start_date = one_year_ago.strftime('%Y-%m-%d')
 
+    if not end_date:
+        end_date = datetime.now().strftime('%Y-%m-%d')
+
+    category_sums = Transactions.objects.values('category__category').filter(date__gte=start_date, date__lte=end_date).annotate(total_amount=Sum('amount')).order_by('total_amount','category')
+
+    if exlude_nocount:
+        category_sums = category_sums.exclude(category_id = 29)
+
+    negative_sum = category_sums.filter(amount__lt=0)
+    total_sum = sum(item['total_amount'] for item in negative_sum)
+
+    data = []
+    for entry in category_sums:
+        category = entry['category__category']
+        total_amount = entry['total_amount']
+        percent = (total_amount / total_sum) *100
+        data.append({
+            'Category':category,
+            'Amount': total_amount,
+            'Percent': round(percent,2)
+        })
+    return JsonResponse(data, safe=False)
 
 
 

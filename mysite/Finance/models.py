@@ -48,5 +48,13 @@ class Transactions(models.Model):
 {'id': 27, 'category': 'Other'}, 
 {'id': 28, 'category': 'Credit Card Payment'}, 
 {'id': 29, 'category': 'Do not Count'}]
+
+Reworking the Database
+1. Remove the Categories for Recurring 
+2. Put that into the new Recurring Column
+    - 0 = Not Recurring [Default]
+    - 1 = Monthly
+    - 2 = Quartlery
+    - Etc.
 '''
 

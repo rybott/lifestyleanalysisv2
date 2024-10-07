@@ -13,8 +13,17 @@ fetch('/finance/api/category_names')
         });
     });
 
-//Weekly Spent-Made
-fetch('/finance/api/amount_made')
+//Top Expenses
+fetch('/finance/api/category_names')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('TopExpenses');
+        data.forEach(item => {
+            const p = document.createElement('p');
+            p.innerHTML = '<strong>Category:</strong>${item.Category} <br/> <strong>Amount:</strong>$${item.Amount} <br/><strong>Percent:</strong>%{item.Percent}%';
+            container.appendChild(p);
+        });
+    })
 
 // Filter Button
 document.getElementById('filter-form').addEventListener('change', () => {

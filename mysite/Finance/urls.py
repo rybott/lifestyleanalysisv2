@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/daily_sums/', apis.daily_expenses, name='daily-sums'),
     path('api/weekly_sums/', apis.weekly_expenses, name='daily-sums'),
     path('api/amount_made/', apis.amount_made, name='amount_made'),
+    path('api/top_expenses/', apis.top_expenses, name='top_expenses')
 ]
