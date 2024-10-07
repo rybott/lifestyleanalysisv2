@@ -4,7 +4,7 @@ from .models import Transactions, Categories
 from django.db.models import Sum 
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, ExtractYear, ExtractMonth
 from django.db.models import F
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 import calendar
 
 def category_names(request):
@@ -13,6 +13,39 @@ def category_names(request):
     
     # Convert to JSON response
     return JsonResponse(list(category_names), safe=False)
+
+def amount_made(request):
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    
+    # Default to last year if no date is specified
+    if not start_date:
+        current_year = datetime.now().year
+        start_date = datetime(current_year, 1, 1).strftime('%Y-%m-%d')
+
+    # Default end date to today if not specified
+    if not end_date:
+        end_date = datetime.now().strftime('%Y-%m-%d')
+
+    transactions = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, category_id=18)
+
+    weekly_totals = transactions.annotate(
+        week_start=TruncWeek('date')  # Truncate to the beginning of the week
+    ).values('week_start').annotate(
+        total_amount=Sum('amount')
+    ).order_by('week_start')
+
+    # Convert week_start to the last day of the week (Sunday)
+    data = []
+    for entry in weekly_totals:
+        week_start = entry['week_start']
+        week_end = week_start + timedelta(days=6)  # Add 6 days to get to Sunday
+        data.append({
+            'week_end': week_end,
+            'total_amount': entry['total_amount']
+        })
+
+    return JsonResponse(data, safe=False)
 
 def top_5_categories(request):
     start_date = request.GET.get('start_date', None)
@@ -40,26 +73,41 @@ def top_5_categories(request):
     data = [{'category': item['category__category'], 'total_amount': item['total_amount']} for item in top_categories]
     return JsonResponse(data, safe=False)
 
-def daily_sums(request):
+def daily_expenses(request):
+    category_name = request.GET.get('category_name', None)
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
-    exlude_nocount = request.GET.get('exclude_nocount', False)
+    exclude_nocount = request.GET.get('exclude_nocount', False)
 
-    transactions = Transactions.objects.all()
 
-    if exlude_nocount:
-        transactions = transactions.exclude(category_id = 29)
-    if start_date:
-        transactions = transactions.filter(date__gte=start_date)
-    if end_date:
-        transactions = transactions.filter(date__lte=end_date)
+    if not start_date:
+        one_year_ago = datetime.now() - timedelta(days=365)
+        start_date = one_year_ago.strftime('%Y-%m-%d')
 
-    daily_totals = transactions.annotate(day=TruncDay('date')).values('date').annotate(total_amount=Sum('amount')).order_by('date')
+    if not end_date:
+        end_date = datetime.now().strftime('%Y-%m-%d')
+
+    transactions = Transactions.objects.filter(date__gte=start_date, date__lte=end_date)
+
+
+    if exclude_nocount:
+        transactions = transactions.exclude(category_id=29)
+    if category_name:
+        category = Categories.objects.get(category=category_name)
+        transactions = transactions.filter(category_id=category.id)
+
+    # Filters out positive amounts (i.e. deposits)
+    transactions = transactions.filter(amount__lt=0)
+
+
+    daily_totals = transactions.annotate(day=TruncDay('date')).values('day').annotate(total_amount=Sum('amount')).order_by('day')
 
     data = list(daily_totals)
     return JsonResponse(data, safe=False)
 
-def weekly_sums(request):
+
+def weekly_expenses(request):
+    category_name = request.GET.get('category_name', None)
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
     exlude_nocount = request.GET.get('exclude_nocount', False)
@@ -72,6 +120,13 @@ def weekly_sums(request):
         transactions = transactions.filter(date__gte=start_date)
     if end_date:
         transactions = transactions.filter(date__lte=end_date)
+
+    if category_name:
+        category = Categories.objects.get(category=category_name)
+        transactions = transactions.filter(category_id=category.id)
+
+    # Filters out positive amounts (i.e. deposits)
+    transactions = transactions.filter(amount__lt=0)
 
     weekly_totals = transactions.annotate(
         week_start=TruncWeek('date')  # Truncate to the beginning of the week
@@ -90,6 +145,33 @@ def weekly_sums(request):
         })
 
     return JsonResponse(data, safe=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def monthly_sums(request):
     start_date = request.GET.get('start_date', None)
