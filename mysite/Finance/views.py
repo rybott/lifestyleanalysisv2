@@ -98,51 +98,14 @@ def dashboard2(request):
     Spending_Change = round((Amount_Spent_week1 - Amount_Spent_week0), 2) if Amount_Spent_week0 != 0 else 0.00
     Spending_Direction = "Increase" if (Amount_Spent_week1 - Amount_Spent_week0) >= 0 else "Reduction"
 
-    # Spending Graph: Aggregating daily, weekly, and monthly data
-    daily_totals = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, amount__lt=0)\
-        .annotate(day=TruncDay('date')).values('day').annotate(total_amount=Sum('amount')).order_by('day')
-
-    # Format the daily_totals QuerySet into a list of dictionaries with stringified dates
-    daily_data = [
-        {'day': entry['day'].strftime('%Y-%m-%d'), 'total_amount': entry['total_amount']}
-        for entry in daily_totals
-    ]
-
-    weekly_totals = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, amount__lt=0)\
-        .annotate(week_start=TruncWeek('date')).values('week_start').annotate(total_amount=Sum('amount')).order_by('week_start')
-    
-    weekly_data = []
-    for entry in weekly_totals:
-        week_start = entry['week_start']
-        week_end = week_start + timedelta(days=6)
-        weekly_data.append({
-            'day': week_end.strftime('%Y-%m-%d'),  # Stringify the datetime
-            'total_amount': entry['total_amount']
-        })
-    
-    monthly_totals = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, amount__lt=0)\
-        .annotate(month_start=TruncMonth('date'), year=ExtractYear('date'), month=ExtractMonth('date'))\
-        .values('year', 'month').annotate(total_amount=Sum('amount'))
-    
-    monthly_data = []
-    for entry in monthly_totals:
-        year = entry['year']
-        month = entry['month']
-        last_day = calendar.monthrange(year, month)[1]
-        last_day_of_month = date(year, month, last_day)
-        monthly_data.append({
-            'day': last_day_of_month.strftime('%Y-%m-%d'),  # Stringify the date
-            'total_amount': entry['total_amount']
-        })
-
     # Creating Context
     context['worked'] = worked
     context['today'] = today
     context['week_start'] = week1_start
-    context['Amount_Made'] = Amount_Made
-    context['Amount_Spent'] = Amount_Spent_total
-    context['Amount_Spent_week1'] = Amount_Spent_week1
-    context['Amount_Spent_week0'] = Amount_Spent_week0
+    context['Amount_Made'] = round(Amount_Made,2)
+    context['Amount_Spent'] = round(Amount_Spent_total*-1,2)
+    context['Amount_Spent_week1'] = round(Amount_Spent_week1*-1,2)
+    context['Amount_Spent_week0'] = round(Amount_Spent_week0*-1,2)
     context['Spending_change'] = Spending_Change
     context['Spending_direction'] = Spending_Direction
     context['selected_category'] = category
@@ -150,14 +113,7 @@ def dashboard2(request):
     context['selected_end_date'] = end_date
     context['exlude_nocount'] = exlude_nocount
 
-    # Correct: Serialize the actual lists/dictionaries to JSON
-    context['Daily_sums'] = json.dumps(list(daily_totals), cls=CustomJSONEncoder)
-    context['Weekly_sums'] = json.dumps(weekly_data, cls=CustomJSONEncoder)
-    context['monthly_sums'] = json.dumps(monthly_data, cls=CustomJSONEncoder)
-    context['Top_exp'] = json.dumps(top_expenses(request, start_date, end_date, exlude_nocount), cls=CustomJSONEncoder)
-
     return render(request, 'dashboard v2.html', context)
-
 
 def categorize(request):
     return render(request,'categorize.html',{})
