@@ -173,11 +173,10 @@ def top_expenses(request):
         percent = (total_amount / total_sum) *100
         data.append({
             'Category':category,
-            'Amount': total_amount,
-            'Percent': round(percent,2)
+            'Amount': f"({abs(round(total_amount, 2)):,.2f})" if total_amount < 0 else f"{round(total_amount, 2):,.2f}",
+            'Percent': f"({abs(round(percent, 2)):,.2f})" if percent < 0 else f"{round(percent, 2):,.2f}"
         })
     return JsonResponse(data, safe=False)
-
 
 
 

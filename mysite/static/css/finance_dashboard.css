@@ -61,9 +61,6 @@ button[type="submit"]:hover {
     padding: 0% 2% 1% 2%;
 }
 
-.header div{
-
-}
 
 .title{
     font-size: x-large;}
@@ -125,3 +122,23 @@ Body Information
 }
 
 
+/*
+Chart Information
+---------------------------------------
+*/
+
+.Grid_charts{
+    gap: 1%;
+    padding: 1% 1% 0% 1%;
+}
+#TopExpenses{
+    background-color: #1c242c;
+    padding: 1%;
+    border-radius: 25px;
+}
+
+#TopExpenses p{
+    color: white;
+    padding: .2%;
+    margin: 0;
+}

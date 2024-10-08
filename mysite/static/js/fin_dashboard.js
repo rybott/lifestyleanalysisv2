@@ -14,13 +14,13 @@ fetch('/finance/api/category_names')
     });
 
 //Top Expenses
-fetch('/finance/api/category_names')
+fetch('/finance/api/top_expenses/')
     .then(response => response.json())
     .then(data => {
         const container = document.getElementById('TopExpenses');
         data.forEach(item => {
             const p = document.createElement('p');
-            p.innerHTML = '<strong>Category:</strong>${item.Category} <br/> <strong>Amount:</strong>$${item.Amount} <br/><strong>Percent:</strong>%{item.Percent}%';
+            p.innerHTML = `<strong>${item.Category} </strong>: $${item.Amount} [ ${item.Percent}% ]`;
             container.appendChild(p);
         });
     })

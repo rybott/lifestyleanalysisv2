@@ -44,10 +44,13 @@ def dashboard2(request):
         Amount_Spent_week0 = Transactions.objects.filter(date__gte=week1_start, date__lte=week1_start, amount__lt=0).aggregate(total=Sum('amount'))['total'] or 0  
         
         if category:
-            category = Categories.objects.get(category=category)
-            Amount_Spent_week1 = Transactions.objects.filter(date__gte=week1_start, date__lte=today, amount__lt=0, category_id=category.id).aggregate(total=Sum('amount'))['total'] or 0  
-            Amount_Spent_week0 = Transactions.objects.filter(date__gte=week1_start, date__lte=week1_start, amount__lt=0, category_id=category.id).aggregate(total=Sum('amount'))['total'] or 0  
-        
+            try:
+                category = Categories.objects.get(category=category)
+                Amount_Spent_week1 = Transactions.objects.filter(date__gte=week1_start, date__lte=today, amount__lt=0, category_id=category.id).aggregate(total=Sum('amount'))['total'] or 0  
+                Amount_Spent_week0 = Transactions.objects.filter(date__gte=week1_start, date__lte=week1_start, amount__lt=0, category_id=category.id).aggregate(total=Sum('amount'))['total'] or 0  
+            except:
+                pass
+
         Spending_Change = f"({abs(round((Amount_Spent_week1 - Amount_Spent_week0), 2)):,.2f})" if  Amount_Spent_week0 != 0 else "0.00"
         Spending_Direction = "Increase" if (Amount_Spent_week1 - Amount_Spent_week0) >= 0 else "Reduction"
 
