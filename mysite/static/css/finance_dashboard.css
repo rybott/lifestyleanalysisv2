@@ -161,3 +161,7 @@ Chart Information
     padding: 0% 2% 0% 2%;
     border-radius: 25px;
 }
+
+#Expense_Chart_Filter {
+    background-color: #a78f21;
+}

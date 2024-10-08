@@ -44,115 +44,102 @@ fetch('/finance/api/top_expenses/')
         });
     });
 
-// Function to fetch and display the chart
-function fetchChartData(type) {
-    let apiUrl = `/finance/api/${type.toLowerCase()}_sums/`; // Adjust the API URL based on the type ?Category_name={{category}}
+// Function to create the chart with given data
+function createChart(labels, spendingData, incomeData, chartType) {
+    const ctx = document.getElementById('spendingChart').getContext('2d');
 
-    // Fetch spending data
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            // Ensure the dates are correctly parsed for spending data
-            const labels = data.map(item => {
-                const date = new Date(item.day); // Create a new Date object from the ISO date string
-                return date.toLocaleDateString('en-US'); // Convert the date to a readable string (e.g., "MM/DD/YYYY")
-            });
+    // Clear previous chart instance
+    if (window.chartInstance) {
+        window.chartInstance.destroy();
+    }
 
-            const amounts = data.map(item => -1 * parseFloat(item.total_amount)); // Negate the amounts
-
-            // Fetch weekly income data
-            fetch('/finance/api/amount_made/')
-                .then(incomeResponse => incomeResponse.json())
-                .then(incomeData => {
-                    // Ensure the dates are correctly parsed for income data
-                    const incomeAmounts = incomeData.map(item => {
-                        const weekEnd = new Date(item.week_end);
-                        return {
-                            weekEnd: weekEnd.toLocaleDateString('en-US'),
-                            amount: parseFloat(item.total_amount)
-                        };
-                    });
-
-                    // Map the weekly income to the spending data dates
-                    const matchedIncomeAmounts = labels.map(label => {
-                        const matchingIncome = incomeAmounts.find(income => income.weekEnd === label);
-                        return matchingIncome ? matchingIncome.amount : null; // If no match, leave null
-                    });
-
-                    // Get the canvas element for the chart
-                    const ctx = document.getElementById('dailySpendingChart').getContext('2d');
-
-                    // Clear any previous chart instance
-                    if (window.chartInstance) {
-                        window.chartInstance.destroy();
+    // Create the chart
+    window.chartInstance = new Chart(ctx, {
+        type: chartType, // 'line', 'bar', or any other chart type
+        data: {
+            labels: labels, // X-axis labels (formatted dates)
+            datasets: [
+                {
+                    label: 'Spending',
+                    data: spendingData, // Y-axis data for spending amounts
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Light blue background
+                    borderColor: 'rgba(75, 192, 192, 1)', // Darker blue border
+                    borderWidth: 2,
+                    fill: false // Disable filling under the line
+                },
+                {
+                    label: 'Income',
+                    data: incomeData, // Y-axis data for income
+                    backgroundColor: 'rgba(192, 75, 75, 0.2)', // Light red background
+                    borderColor: 'rgba(192, 75, 75, 1)', // Darker red border
+                    borderWidth: 2,
+                    fill: false // Disable filling under the line
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
                     }
-
-                    // Create the chart
-                    window.chartInstance = new Chart(ctx, {
-                        type: 'line', // Line chart type
-                        data: {
-                            labels: labels, // X-axis labels (formatted dates)
-                            datasets: [
-                                {
-                                    label: `${type} Spending`,
-                                    data: amounts, // Y-axis data (negated spending amounts)
-                                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Light blue background
-                                    borderColor: 'rgba(75, 192, 192, 1)', // Darker blue border
-                                    borderWidth: 2,
-                                    fill: false, // Disable filling under the line
-                                },
-                                {
-                                    label: 'Weekly Income', // Add the weekly income dataset
-                                    data: matchedIncomeAmounts, // Y-axis data for income
-                                    backgroundColor: 'rgba(192, 75, 75, 0.2)', // Light red background
-                                    borderColor: 'rgba(192, 75, 75, 1)', // Darker red border
-                                    borderWidth: 2,
-                                    fill: false, // Disable filling under the line
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Date',
-                                    },
-                                },
-                                y: {
-                                    title: {
-                                        display: true,
-                                        text: 'Amount ($)',
-                                    },
-                                    ticks: {
-                                        callback: function(value) {
-                                            return '$' + value; // Add dollar sign to Y-axis labels
-                                        }
-                                    }
-                                }
-                            }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Amount ($)'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value; // Add dollar sign to Y-axis labels
                         }
-                    });
-                })
-                .catch(error => console.error('Error fetching income data:', error));
-        })
-        .catch(error => console.error('Error fetching spending data:', error));
+                    }
+                }
+            }
+        }
+    });
 }
 
-// Function to handle filter changes
-function handleFilterChange() {
-    const filter = document.getElementById('Expense_Chart_Filter').value; // Get the selected value
-    fetchChartData(filter); // Fetch data based on the selected filter
+// Function to get data for the selected chart type
+function getChartData(type) {
+    let sums;
+    switch (type) {
+        case 'Daily':
+            sums = dailySums;
+            break;
+        case 'Weekly':
+            sums = weeklySums;
+            break;
+        case 'Monthly':
+            sums = monthlySums;
+            break;
+    }
+
+    const labels = sums.map(item => {
+        const date = new Date(item.day); // Convert the string date to Date object
+        return date.toLocaleDateString('en-US'); // Convert to readable format
+    });
+
+    const spendingData = sums.map(item => parseFloat(item.total_amount));
+    const incomeData = spendingData.map(() => 0); // Replace with actual income data if needed
+
+    createChart(labels, spendingData, incomeData, 'line'); // Create the chart as a line chart
 }
 
-// Set up the event listener for the select dropdown
-document.getElementById('Expense_Chart_Filter').addEventListener('change', handleFilterChange);
-
-// Fetch the default chart data for "Weekly" on page load
-document.addEventListener('DOMContentLoaded', function() {
-    fetchChartData('Weekly'); // Fetch weekly data by default
+// Handle chart type selection
+document.getElementById('Expense_Chart_Filter').addEventListener('change', function() {
+    const selectedType = this.value;
+    getChartData(selectedType); // Fetch the appropriate data for the selected type
 });
+
+// Initialize chart on page load with weekly data
+document.addEventListener('DOMContentLoaded', function() {
+    getChartData('Weekly'); // Load the weekly data by default
+});
+
+
 
 
 

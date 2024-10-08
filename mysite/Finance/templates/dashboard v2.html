@@ -7,7 +7,8 @@
 {% endblock %}
 
 {% block template %}
-  
+
+
 <body>
     <div class="header">
         <div class="title"><b></b>Dashboard<b></b></div>
@@ -55,6 +56,7 @@
     <div class="Grid_toprow"> 
         <div id="TopRowChild" class="totalspentmade">
             <h5>Current Period Spending</h5>
+            <p>{{worked}}</p>
             <p>Amount Made ${{ Amount_Made }}</p>
             <p>Amount Spent ${{ Amount_Spent}}</p>
         </div>
@@ -94,9 +96,27 @@
 </body>
     
 
+{{ Daily_sums|json_script:"dailySumsData" }}
+{{ Weekly_sums|json_script:"weeklySumsData" }}
+{{ monthly_sums|json_script:"monthlySumsData" }}
+{{ Top_exp|json_script:"topExpensesData" }}
+
+
+<script type="text/javascript">
+    const dailySums = JSON.parse(document.getElementById('dailySumsData').textContent);
+    const weeklySums = JSON.parse(document.getElementById('weeklySumsData').textContent);
+    const monthlySums = JSON.parse(document.getElementById('monthlySumsData').textContent);
+    const topExpenses = JSON.parse(document.getElementById('topExpensesData').textContent);
+</script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{% static 'js/fin_dashboard.js' %}"></script> 
+
+
+
+
+
 
 
 

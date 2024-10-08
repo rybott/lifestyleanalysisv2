@@ -190,10 +190,10 @@ def monthly_expenses(request):
 
     return JsonResponse(data, safe=False)
 
-def top_expenses(request):
-    start_date = request.GET.get('start_date', None)
-    end_date = request.GET.get('end_date', None)
-    exlude_nocount = request.GET.get('exclude_nocount', False)
+def top_expenses(request, start, end, exclude):
+    start_date = start
+    end_date = end
+    exlude_nocount = exclude
 
     if not start_date:
         one_year_ago = datetime.now() - timedelta(days=365)
@@ -220,4 +220,4 @@ def top_expenses(request):
             'Amount': f"({abs(round(total_amount, 2)):,.2f})" if total_amount < 0 else f"{round(total_amount, 2):,.2f}",
             'Percent': f"({abs(round(percent, 2)):,.2f})" if percent < 0 else f"{round(percent, 2):,.2f}"
         })
-    return JsonResponse(data, safe=False)
+    return data
