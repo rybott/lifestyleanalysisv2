@@ -148,7 +148,16 @@ Chart Information
 
 #TopExpenses p {
     font-family: 'Lucida Console', Courier, monospace;
+    font-size: small;
     color: white;
     padding: 0.6%;
     margin: 0;
+}
+
+
+.chart-container {
+    width: auto;
+    background-color: #1c242c;
+    padding: 0% 2% 0% 2%;
+    border-radius: 25px;
 }

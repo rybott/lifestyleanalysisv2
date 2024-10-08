@@ -41,15 +41,14 @@ def dashboard2(request):
         Amount_Made = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, category_id=18).aggregate(total=Sum('amount'))['total'] or 0 
         Amount_Spent = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, amount__lt=0).aggregate(total=Sum('amount'))['total'] or 0 
         Amount_Spent_week1 = Transactions.objects.filter(date__gte=week1_start, date__lte=today, amount__lt=0).aggregate(total=Sum('amount'))['total'] or 0  
-        Amount_Spent_week0 = Transactions.objects.filter(date__gte=week1_start, date__lte=week1_start, amount__lt=0).aggregate(total=Sum('amount'))['total'] or 0  
+        Amount_Spent_week0 = Transactions.objects.filter(date__gte=week0_start, date__lte=week1_start, amount__lt=0).aggregate(total=Sum('amount'))['total'] or 0  
         
-        if category:
-            try:
-                category = Categories.objects.get(category=category)
-                Amount_Spent_week1 = Transactions.objects.filter(date__gte=week1_start, date__lte=today, amount__lt=0, category_id=category.id).aggregate(total=Sum('amount'))['total'] or 0  
-                Amount_Spent_week0 = Transactions.objects.filter(date__gte=week1_start, date__lte=week1_start, amount__lt=0, category_id=category.id).aggregate(total=Sum('amount'))['total'] or 0  
-            except:
-                pass
+        if category != "All Categories":
+            category = Categories.objects.get(category=category)
+            Amount_Spent_week1 = Transactions.objects.filter(date__gte=week1_start, date__lte=today, amount__lt=0, category_id=category.id).aggregate(total=Sum('amount'))['total'] or 0  
+            Amount_Spent_week0 = Transactions.objects.filter(date__gte=week0_start, date__lte=week1_start, amount__lt=0, category_id=category.id).aggregate(total=Sum('amount'))['total'] or 0  
+
+                
 
         Spending_Change = f"({abs(round((Amount_Spent_week1 - Amount_Spent_week0), 2)):,.2f})" if  Amount_Spent_week0 != 0 else "0.00"
         Spending_Direction = "Increase" if (Amount_Spent_week1 - Amount_Spent_week0) >= 0 else "Reduction"

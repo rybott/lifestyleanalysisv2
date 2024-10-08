@@ -140,7 +140,51 @@ def weekly_expenses(request):
         week_start = entry['week_start']
         week_end = week_start + timedelta(days=6)  # Add 6 days to get to Sunday
         data.append({
-            'week_end': week_end,
+            'day': week_end,
+            'total_amount': entry['total_amount']
+        })
+
+    return JsonResponse(data, safe=False)
+
+def monthly_expenses(request):
+    category_name = request.GET.get('category_name', None)
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+    exlude_nocount = request.GET.get('exclude_nocount', False)
+
+    transactions = Transactions.objects.all()
+
+    if exlude_nocount:
+        transactions = transactions.exclude(category_id = 29)
+    if start_date:
+        transactions = transactions.filter(date__gte=start_date)
+    if end_date:
+        transactions = transactions.filter(date__lte=end_date)
+
+    if category_name:
+        category = Categories.objects.get(category=category_name)
+        transactions = transactions.filter(category_id=category.id)
+
+    # Filters out positive amounts (i.e. deposits)
+    transactions = transactions.filter(amount__lt=0)
+
+    monthly_totals = transactions.annotate(
+        month_start=TruncMonth('date'),
+        year=ExtractYear('date'),
+        month=ExtractMonth('date')
+    ).values('year', 'month').annotate(
+        total_amount=Sum('amount')
+    )
+
+    # Convert year and month into the last day of the month
+    data = []
+    for entry in monthly_totals:
+        year = entry['year']
+        month = entry['month']
+        last_day = calendar.monthrange(year, month)[1]
+        last_day_of_month = date(year, month, last_day)
+        data.append({
+            'day': last_day_of_month,
             'total_amount': entry['total_amount']
         })
 
@@ -176,64 +220,4 @@ def top_expenses(request):
             'Amount': f"({abs(round(total_amount, 2)):,.2f})" if total_amount < 0 else f"{round(total_amount, 2):,.2f}",
             'Percent': f"({abs(round(percent, 2)):,.2f})" if percent < 0 else f"{round(percent, 2):,.2f}"
         })
-    return JsonResponse(data, safe=False)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def monthly_sums(request):
-    start_date = request.GET.get('start_date', None)
-    end_date = request.GET.get('end_date', None)
-    exlude_nocount = request.GET.get('exclude_nocount', False)
-
-    transactions = Transactions.objects.all()
-
-    if exlude_nocount:
-        transactions = transactions.exclude(category_id = 29)
-    if start_date:
-        transactions = transactions.filter(date__gte=start_date)
-    if end_date:
-        transactions = transactions.filter(date__lte=end_date)
-
-    monthly_totals = transactions.annotate(
-        month_start=TruncMonth('date'),
-        year=ExtractYear('date'),
-        month=ExtractMonth('date')
-    ).values('year', 'month').annotate(
-        total_amount=Sum('amount')
-    )
-
-    # Convert year and month into the last day of the month
-    data = []
-    for entry in monthly_totals:
-        year = entry['year']
-        month = entry['month']
-        last_day = calendar.monthrange(year, month)[1]
-        last_day_of_month = date(year, month, last_day)
-        data.append({
-            'month_end': last_day_of_month,
-            'total_amount': entry['total_amount']
-        })
-
-
     return JsonResponse(data, safe=False)
