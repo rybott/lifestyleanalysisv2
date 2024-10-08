@@ -77,10 +77,19 @@
         </div>
     </div>
     <div class="Grid_charts">
-        <div class="TopExpenses" id="TopExpenses"></div>
-        <div class="TopTransactions"></div>
-        <div class="ExpPiechart"></div>
-        <div class="Overtime"></div>
+        <div class="TopExpenses">
+        <h2> Current Period Expense Breakdown <h4>
+        <div id="TopExpenses"></div>
+        </div>
+        <div class="chart-container" >
+            <select id="Expense_Chart_Filter" name="Exp_Chart_Filter">
+                <option value="Daily">Daily</option>
+                <option value="Weekly" selected>Weekly</option>
+                <option value="Monthly">Monthly</option>
+            </select>
+            <!-- The canvas where the chart will be drawn -->
+            <canvas id="dailySpendingChart" width="400" height="200"></canvas>
+        </div>
         <budget class="Budget"></budget>
     </div>
 </body>
