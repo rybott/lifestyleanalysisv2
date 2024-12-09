@@ -5,10 +5,10 @@ import re
 import pandas as pd
 from bs4 import BeautifulSoup
 
+# Database Connection
 database = ""
 
-# Chase
-
+# Email Server
 imap_server = "imap.gmail.com"
 email_address = "r.bonannibott@gmail.com"
 pw = "aaed bssv hrij tgfa "
@@ -21,7 +21,7 @@ start_date = end_date - timedelta(days=730)
 start_str = start_date.strftime("%d-%b-%Y")
 end_str = (end_date + timedelta(days=1)).strftime("%d-%b-%Y")
 
-# Search Email
+# Chase
 imap.select('"Chase Transactions"')
 _, msgnums = imap.search(None, f'(SINCE "{start_str}" BEFORE "{end_str}")')
 
@@ -30,8 +30,6 @@ accounts = []
 dates = []
 amounts = []
 descriptions = []
-
-counter = 0
 
 for msgnum in msgnums[0].split():
     typ, data = imap.fetch(msgnum, "(RFC822)")
@@ -65,7 +63,7 @@ for msgnum in msgnums[0].split():
                     account_info = soup.find('td', string=lambda text: text and 'Account' in text).find_next('td').text.strip()
                     date_info = soup.find('td', string=lambda text: text and 'Received' in text).find_next('td').text.strip()
                     amount_info = soup.find('td', string=lambda text: text and 'Amount' in text).find_next('td').text.strip()
-                    merchant_info = "Deposit" 
+                    merchant_info = "Deposit"
 
                 else:
                     transaction_type = "Credit Card Transaction"
@@ -74,20 +72,22 @@ for msgnum in msgnums[0].split():
                     merchant_info = soup.find_all('td', string='Merchant')[0].find_next('td').text.strip()
                     amount_info = soup.find_all('td', string='Amount')[0].find_next('td').text.strip()
 
-                counter = counter +1
 
 
             except:
-                # Add the Error Handling for Chase and then discover
                 break
-        
+
     types.append(transaction_type)
     accounts.append(account_info)
     dates.append(date_info)
     descriptions.append(merchant_info)
     amounts.append(amount_info)
 
-# print(len(dates),len(types),len(accounts),len(amounts),len(descriptions))
+
+
+
+
+
 
 Transactions_df = pd.DataFrame({
   'Date': dates,
@@ -99,4 +99,3 @@ Transactions_df = pd.DataFrame({
 
 imap.close()
 imap.logout()
-
