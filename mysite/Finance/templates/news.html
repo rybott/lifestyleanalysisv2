@@ -1,0 +1,123 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <!-- Additional stylesheet specific to this page -->
+    <link rel="stylesheet" href="{% static 'css/finance_dashboard.css' %}">
+{% endblock %}
+
+{% block template %}
+
+
+<body>
+    <div class="header">
+        <div class="title"><b></b>News<b></b></div>
+        <div class="filtered">
+            <div class="category">{{ selected_category }}</div>
+            <div class="dates">
+                <p><i>{{ selected_start_date }}<i></p>
+                <p><i>{{ selected_end_date }}<i></p>
+            </div>
+        </div>
+        <div class="filter_menu">
+            <div class="toggle-container">
+                <!-- SVG button to toggle the filter menu -->
+                <button id="toggle-button" class="toggle-button">
+                <!-- Replace this with your own SVG -->
+                <img src="{% static 'Assets/SVG/filterv2.svg' %}" alt="Filter">
+                </button>
+
+                <!-- The form to be toggled -->
+                <div id="form-container" class="form-container hidden">
+                <form id="filter-form" method="GET">
+                    <label for="category-name">Category Name:</label>
+                    <select id="category-name" name="Category_name" value="All Categories">
+                        <option value="">All Categories</option>
+                        {% for category in category_names %}
+                        <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="start-date">From:</label>
+                    <input type="date" id="start-date" name="start_date" value="{{ selected_start_date }}">>
+
+                    <label for="end-date">Until:</label>
+                    <input type="date" id="end-date" name="end_date" value="{{ selected_end_date }}">
+
+                    <label for="exlude_nocount">"Do Not Count"</label>
+                    <input type="checkbox" id="exlude-nocount" name="exlude_nocount" {{ exlude_nocount }}>
+
+                    <button type="submit">Filter</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="Grid_toprow">
+        <div id="TopRowChild" class="totalspentmade">
+            <h5>Current Period Spending</h5>
+            <p>{{worked}}</p>
+            <p>Amount Made ${{ Amount_Made }}</p>
+            <p>Amount Spent ${{ Amount_Spent}}</p>
+        </div>
+        <div id="TopRowChild" class="thisweeklastweek">
+            <h5>Weekly Spending Comparison</h5>
+            <p>Amount Spent This Week ${{ Amount_Spent_week1 }}</p>
+            <p>Amount Spend Last Weel ${{ Amount_Spent_week0 }}</p>
+            <p style="font-size:x-small">{{ Spending_change }}% {{Spending_direction}} in Spending</p>
+        </div>
+        <div id="TopRowChild" class="monthlydue">
+            <h5>Next 5 Recurring Payments</h5>
+            <div class="dueexp">
+                <p>$xxx Due (dte) for xxx</p>
+                <p>$xxx Due (dte) for xxx</p>
+                <p>$xxx Due (dte) for xxx</p>
+                <p>$xxx Due (dte) for xxx</p>
+                <p>$xxx Due (dte) for xxx</p>
+            </div>
+        </div>
+    </div>
+    <div class="Grid_charts">
+        <div class="TopExpenses">
+        <h2> Current Period Expense Breakdown <h4>
+        <div id="TopExpenses"></div>
+        </div>
+        <div class="chart-container" >
+            <select id="Expense_Chart_Filter" name="Exp_Chart_Filter">
+                <option value="Daily">Daily</option>
+                <option value="Weekly" selected>Weekly</option>
+                <option value="Monthly">Monthly</option>
+            </select>
+            <!-- The canvas where the chart will be drawn -->
+            <canvas id="dailySpendingChart" width="400" height="200"></canvas>
+        </div>
+        <budget class="Budget"></budget>
+    </div>
+</body>
+
+
+{{ Daily_sums|json_script:"dailySumsData" }}
+{{ Weekly_sums|json_script:"weeklySumsData" }}
+{{ monthly_sums|json_script:"monthlySumsData" }}
+{{ Top_exp|json_script:"topExpensesData" }}
+
+
+<script type="text/javascript">
+    const dailySums = JSON.parse(document.getElementById('dailySumsData').textContent);
+    const weeklySums = JSON.parse(document.getElementById('weeklySumsData').textContent);
+    const monthlySums = JSON.parse(document.getElementById('monthlySumsData').textContent);
+    const topExpenses = JSON.parse(document.getElementById('topExpensesData').textContent);
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/fin_dashboard.js' %}"></script>
+
+
+
+
+
+
+
+
+{% endblock %}

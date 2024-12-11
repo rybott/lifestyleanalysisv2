@@ -58,7 +58,7 @@ button[type="submit"]:hover {
     border-radius: 20px;
     color: white;
     align-items: flex-end;
-    padding: 0% 2% 1% 2%;
+    padding: 4% 2% 1% 2%;
 }
 
 
@@ -119,6 +119,16 @@ Body Information
 .dueexp p {
     text-align: center;
     box-sizing: border-box; /* Ensures padding is included in the width calculation */
+}
+
+.ExpText{
+    color: white;
+    font-size: small;
+    padding: 1%;
+}
+
+.ExpBrkdown{
+    color: white;
 }
 
 

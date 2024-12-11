@@ -3,14 +3,14 @@
 
 {% block extra_css %}
     <!-- Additional stylesheet specific to this page -->
-    <link rel="stylesheet" href="{% static 'css/finance_dashboard.css' %}">
+   <link rel="stylesheet" href="{% static 'css/finance_dashboard.css' %}">
 {% endblock %}
 
 {% block template %}
 
 
 <body>
-    <div class="header">
+    <div class="header"  style="padding-top:1%">
         <div class="title"><b></b>Dashboard<b></b></div>
         <div class="filtered">
             <div class="category">{{ selected_category }}</div>
@@ -26,7 +26,7 @@
                 <!-- Replace this with your own SVG -->
                 <img src="{% static 'Assets/SVG/filterv2.svg' %}" alt="Filter">
                 </button>
-            
+
                 <!-- The form to be toggled -->
                 <div id="form-container" class="form-container hidden">
                 <form id="filter-form" method="GET">
@@ -37,37 +37,37 @@
                         <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
                         {% endfor %}
                     </select>
-            
+
                     <label for="start-date">From:</label>
                     <input type="date" id="start-date" name="start_date" value="{{ selected_start_date }}">>
-            
+
                     <label for="end-date">Until:</label>
                     <input type="date" id="end-date" name="end_date" value="{{ selected_end_date }}">
-            
+
                     <label for="exlude_nocount">"Do Not Count"</label>
                     <input type="checkbox" id="exlude-nocount" name="exlude_nocount" {{ exlude_nocount }}>
-            
+
                     <button type="submit">Filter</button>
                 </form>
                 </div>
             </div>
         </div>
     </div>
-    <div class="Grid_toprow"> 
+    <div class="Grid_toprow">
         <div id="TopRowChild" class="totalspentmade">
-            <h5>Current Period Spending</h5>
+            <h4 style="margin: 2%;">Current Period Spending</h4>
             <p>{{worked}}</p>
             <p>Amount Made ${{ Amount_Made }}</p>
             <p>Amount Spent ${{ Amount_Spent}}</p>
         </div>
         <div id="TopRowChild" class="thisweeklastweek">
-            <h5>Weekly Spending Comparison</h5>
+            <h4 style="margin: 2%;">Weekly Spending Comparison</h4>
             <p>Amount Spent This Week ${{ Amount_Spent_week1 }}</p>
             <p>Amount Spend Last Weel ${{ Amount_Spent_week0 }}</p>
             <p style="font-size:x-small">{{ Spending_change }}% {{Spending_direction}} in Spending</p>
         </div>
         <div id="TopRowChild" class="monthlydue">
-            <h5>Next 5 Recurring Payments</h5>
+            <h4 style="margin: 2%;">Next 5 Recurring Payments</h4>
             <div class="dueexp">
                 <p>$xxx Due (dte) for xxx</p>
                 <p>$xxx Due (dte) for xxx</p>
@@ -79,45 +79,119 @@
     </div>
     <div class="Grid_charts">
         <div class="TopExpenses">
-        <h2> Current Period Expense Breakdown <h4>
-        <div id="TopExpenses"></div>
+        <h4 class="ExpBrkdown" style="color:white"> Current Period Expense Breakdown <h4>
+        <div id="TopExpenses">
+            {% for category in categories_amount %}
+                <p class="ExpText">{{ category.category_name }} {{ category.total }}</p>
+            {% endfor %}
+        </div>
         </div>
         <div class="chart-container" >
-            <select id="Expense_Chart_Filter" name="Exp_Chart_Filter">
-                <option value="Daily">Daily</option>
-                <option value="Weekly" selected>Weekly</option>
-                <option value="Monthly">Monthly</option>
-            </select>
-            <!-- The canvas where the chart will be drawn -->
-            <canvas id="dailySpendingChart" width="400" height="200"></canvas>
+            <form id="Chart_type_form" method="GET">
+                <div class="chart-container">
+                    <select id="Expense_Chart_Filter" name="chart_type" onchange="this.form.submit()">
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly" selected>Weekly</option>
+                        <option value="Monthly">Monthly</option>
+                    </select>
+                </div>
+            </form>
+            <canvas id="spendingChart" width="400" height="200"></canvas>
+            <div>
+                <pre>{{ chart_data }}</pre>
+            </div>
         </div>
-        <budget class="Budget"></budget>
     </div>
-</body>
-    
 
-{{ Daily_sums|json_script:"dailySumsData" }}
-{{ Weekly_sums|json_script:"weeklySumsData" }}
-{{ monthly_sums|json_script:"monthlySumsData" }}
-{{ Top_exp|json_script:"topExpensesData" }}
+<script>
+    // Data passed from Django context
+    const labels = {{ chart_data.labels|safe }};
+    const totals = {{ chart_data.totals|safe }};
 
+    // Create the Chart.js chart
+    const ctx = document.getElementById('spendingChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',  // Choose the chart type (line, bar, etc.)
+        data: {
+            labels: labels,  // X-axis labels (dates, weeks, or months)
+            datasets: [{
+                label: 'Total Expenses',
+                data: totals,  // Y-axis data (expenses)
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 1,
+                fill: false  // No fill under the line
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date/Week/Month'  // Customize the X-axis label
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Amount ($)'  // Customize the Y-axis label
+                    }
+                }
+            }
+        }
+    });
 
-<script type="text/javascript">
-    const dailySums = JSON.parse(document.getElementById('dailySumsData').textContent);
-    const weeklySums = JSON.parse(document.getElementById('weeklySumsData').textContent);
-    const monthlySums = JSON.parse(document.getElementById('monthlySumsData').textContent);
-    const topExpenses = JSON.parse(document.getElementById('topExpensesData').textContent);
+    // Fetch category names and populate the drop-down
+    fetch('/finance/api/category_names')
+    .then(response => response.json())
+    .then(data => {
+        const categorySelect = document.getElementById('category-name');
+
+        // Populate dropdown options with category names
+        data.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;  // Option value is the category name
+            option.text = category;   // Option label is the category name
+            categorySelect.add(option);
+        });
+    });
+
+    // Filter Button
+    document.getElementById('filter-form').addEventListener('change', () => {
+        // Update display dynamically
+        const category = document.getElementById('category-name').value;
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+        const excludeNocount = document.getElementById('exlude-nocount').checked ? 'checked' : '';
+
+        const categoryDisplay = category ? category : 'All Categories';
+
+        document.querySelector('.filter-display').innerHTML = `
+            <p>Category: ${categoryDisplay}</p>
+            <p>From: ${startDate}</p>
+            <p>Until: ${endDate}</p>
+            <p>Excluded Do Not Count: ${excludeNocount}</p>
+        `;
+    });
+    const toggleButton = document.getElementById('toggle-button');
+    const formContainer = document.getElementById('form-container');
+
+    toggleButton.addEventListener('click', () => {
+    formContainer.classList.toggle('active');
+    });
 </script>
 
 
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'js/fin_dashboard.js' %}"></script> 
+<script src="{% static 'js/fin_dashboard.js' %}"></script>
 
 
 
 
 
-
+</body>
 
 
 {% endblock %}

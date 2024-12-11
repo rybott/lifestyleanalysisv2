@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Transactions, Categories
-from django.db.models import Sum 
+from django.db.models import Sum
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, ExtractYear, ExtractMonth
 from django.db.models import F
 from datetime import timedelta, date, datetime
@@ -10,21 +10,21 @@ import calendar
 def category_names(request):
     # Get all unique category names from the Categories model
     category_names = Categories.objects.values_list('category', flat=True).distinct()
-    
+
     # Convert to JSON response
     return JsonResponse(list(category_names), safe=False)
 
 def amount_made(request):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
-    
+
     # Default to last year if no date is specified
     if not start_date:
         current_year = datetime.now().year
         start_date = datetime(current_year, 1, 1).strftime('%Y-%m-%d')
 
     # Default end date to today if not specified
-    if not end_date:
+    if not end_date: 
         end_date = datetime.now().strftime('%Y-%m-%d')
 
     transactions = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, category_id=18)
