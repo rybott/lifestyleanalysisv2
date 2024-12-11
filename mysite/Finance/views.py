@@ -39,7 +39,6 @@ def dashboard3(request):
     if not end_date:
         end_date = today.strftime('%Y-%m-%d')
 
-    transactions = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, amount__lt=0)
 
     # Amount Made in Salary over the Period
     Amount_Made = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, category_id=18)
@@ -49,6 +48,7 @@ def dashboard3(request):
     Amount_Spent_total = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, amount__lt=0)
     Amount_Spent_week1 = Transactions.objects.filter(date__gte=week1_start, date__lte=today, amount__lt=0)
     Amount_Spent_week0 = Transactions.objects.filter(date__gte=week0_start, date__lte=week1_start, amount__lt=0)
+    transactions = Amount_Spent_total
 
     if category:
         worked = "It Worked " + str(category)
@@ -57,7 +57,7 @@ def dashboard3(request):
             Amount_Spent_week1 = Amount_Spent_week1.filter(category_id=Category.id)
             Amount_Spent_week0 = Amount_Spent_week0.filter(category_id=Category.id)
             Amount_Spent_total = Amount_Spent_total.filter(category_id=Category.id)
-            transactions = transactions.filter(category_id=category.id)
+            transactions = transactions.filter(category_id=Category.id)
         except Categories.DoesNotExist:
             worked = f"Category '{category}' does not exist"
     else:
@@ -66,7 +66,7 @@ def dashboard3(request):
         Amount_Spent_total = Amount_Spent_total.exclude(category_id=29)
         Amount_Spent_week1 = Amount_Spent_week1.exclude(category_id=29)
         Amount_Spent_week0 = Amount_Spent_week0.exclude(category_id=29)
-        transactions = transactions.exclude(category_id=29)
+        # transactions = transactions.exclude(category_id=29)
 
     Amount_Spent_total = Amount_Spent_total.aggregate(total=Sum('amount'))['total'] or 0
     Amount_Spent_week1 = Amount_Spent_week1.aggregate(total=Sum('amount'))['total'] or 0
