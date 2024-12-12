@@ -96,55 +96,47 @@
                     </select>
                 </div>
             </form>
+            <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
             <canvas id="spendingChart" width="400" height="200"></canvas>
         </div>
     </div>
 
 <script>
-    // Data passed from Django context
-    const labels = {{ chart_data.labels|safe }};
-    const totals = {{ chart_data.totals|safe }};
+    // const labels = {{ chart_data.labels|safe }};
+    // const totals = {{ chart_data.totals|safe }};
 
-    // Create the Chart.js chart
-    const ctx = document.getElementById('spendingChart').getContext('2d');
-    const chart = new Chart(ctx, {
-        type: 'line',  // Choose the chart type (line, bar, etc.)
-        data: {
-            labels: labels,  // X-axis labels (dates, weeks, or months)
-            datasets: [{
-                label: 'Total Expenses',
-                data: totals,  // Y-axis data (expenses)
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 1,
-                fill: false  // No fill under the line
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Date/Week/Month'  // Customize the X-axis label
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Amount ($)'  // Customize the Y-axis label
-                    }
-                }
-            }
-        }
+    //new Chart("spendingChart", {
+    //    type: "line",
+    //    data: {
+    //        labels: Labels,
+    //        datasets: [{
+    //        backgroundColor:"rgba(0,0,255,1.0)",
+    //        borderColor: "rgba(0,0,255,0.1)",
+    //        data: totals
+    //        }]
+    //    },
+    //  });
+    const xValues = [50,60,70,80,90,100,110,120,130,140,150];
+    const yValues = [7,8,8,9,9,9,10,11,14,14,15];
+
+    new Chart("myChart", {
+    type: "line",
+    data: {
+        labels: xValues,
+        datasets: [{
+        backgroundColor:"rgba(0,0,255,1.0)",
+        borderColor: "rgba(0,0,255,0.1)",
+        data: yValues
+        }]
+    }
     });
 
 </script>
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'js/fin_dashboard.js' %}"></script>
+<script src="{% static 'js/test.js' %}"></script>
 
 
 
