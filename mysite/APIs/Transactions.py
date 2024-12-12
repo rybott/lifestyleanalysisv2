@@ -83,12 +83,13 @@ class Chase:
             amounts.append(amount_info)
 
         Transactions_df = pd.DataFrame({
-        'Date': dates,
-        'Type': types,
-        'Account': accounts,
-        'Amount': amounts,
-        'Description': descriptions,
+        'date': dates,
+        'account': accounts,
+        'transaction_type': types,
+        'description': descriptions,
+        'amount': amounts
         })
+        Transactions_df['category'] = "Uncategorized"
 
         imap.close()
         imap.logout()
@@ -152,14 +153,14 @@ class Discover:
                     except AttributeError as e:
                         print(f"Error parsing transaction: {e}")
 
-
         Transactions_df = pd.DataFrame({
-        'Date': dates,
-        'Type': types,
-        'Account': accounts,
-        'Amount': amounts,
-        'Description': descriptions,
+        'date': dates,
+        'account': accounts,
+        'transaction_type': types,
+        'description': descriptions,
+        'amount': amounts
         })
+        Transactions_df['category'] = "Uncategorized"
 
         imap.close()
         imap.logout()
