@@ -39,10 +39,17 @@
                     </select>
 
                     <label for="start-date">From:</label>
-                    <input type="date" id="start-date" name="start_date" value="{{ selected_start_date }}">>
+                    <input type="date" id="start-date" name="start_date" value="{{ selected_start_date }}">
 
                     <label for="end-date">Until:</label>
                     <input type="date" id="end-date" name="end_date" value="{{ selected_end_date }}">
+
+                    <select id="Expense_Chart_Filter" name="chart_type">
+                        <option value="Select_Option" selected>Weekly</option>
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Monthly">Monthly</option>
+                    </select>
 
                     <label for="exlude_nocount">"Do Not Count"</label>
                     <input type="checkbox" id="exlude-nocount" name="exlude_nocount" {{ exlude_nocount }}>
@@ -64,11 +71,11 @@
             <h4 style="margin: 2%;">Weekly Spending Comparison</h4>
             <p>Amount Spent This Week ${{ Amount_Spent_week1 }}</p>
             <p>Amount Spend Last Weel ${{ Amount_Spent_week0 }}</p>
-            <p style="font-size:x-small">{{ Spending_change }}% {{Spending_direction}} in Spending</p>
+            <p style="font-size:small">{{ Spending_change }}% {{Spending_direction}} in Spending</p>
         </div>
         <div id="TopRowChild" class="monthlydue">
             <h4 style="margin: 2%;">Next 5 Recurring Payments</h4>
-            <div class="dueexp">
+            <div class="dueexp" style="font-size: 15px;">
                 <p>$xxx Due (dte) for xxx</p>
                 <p>$xxx Due (dte) for xxx</p>
                 <p>$xxx Due (dte) for xxx</p>
@@ -80,42 +87,90 @@
     <div class="Grid_charts">
         <div class="TopExpenses">
         <h4 class="ExpBrkdown" style="color:white"> Current Period Expense Breakdown <h4>
-        <div id="TopExpenses">
+        <div id="TopExpenses" >
             {% for category in categories_amount %}
-                <p class="ExpText">{{ category.category_name }} {{ category.total }}</p>
+                <p class="ExpText" style="font-size: 15px;">{{ category.category_name }} {{ category.total }}</p>
             {% endfor %}
         </div>
         </div>
         <div class="chart-container" >
             <form id="Chart_type_form" method="GET">
                 <div class="chart-container">
-                    <select id="Expense_Chart_Filter" name="chart_type" onchange="this.form.submit()">
-                        <option value="Daily">Daily</option>
-                        <option value="Weekly" selected>Weekly</option>
-                        <option value="Monthly">Monthly</option>
-                    </select>
+                    {{ selected_start_date }}
                 </div>
             </form>
-            <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
             <canvas id="spendingChart" width="400" height="200"></canvas>
         </div>
     </div>
 
-<script>
-    // const labels = {{ chart_data.labels|safe }};
-    // const totals = {{ chart_data.totals|safe }};
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
-    //new Chart("spendingChart", {
-    //    type: "line",
-    //    data: {
-    //        labels: Labels,
-    //        datasets: [{
-    //        backgroundColor:"rgba(0,0,255,1.0)",
-    //        borderColor: "rgba(0,0,255,0.1)",
-    //        data: totals
-    //        }]
-    //    },
-    //  });
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById("spendingChart").getContext("2d");
+        const chartData = JSON.parse('{{ chart_data|escapejs }}');
+
+        new Chart(ctx, {
+            type: "line", // Set chart type to line
+            data: {
+                labels: chartData.labels, // Pass the labels from Django
+                datasets: [{
+                    label: '',
+                    //pointRadius: 10,
+                    borderColor: "rgba(0,0,255,1.0)", // Line color
+                    data: chartData.totals, // Totals from Django
+                    fill: false // Disable fill for pure line graph
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            display: false //this will remove only the label
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            min: Math.min.apply(this, chartData.totals) - 100,
+                            max: Math.max.apply(this, chartData.totals) + 100
+                         }
+                        }]
+
+                },
+                legend: {
+                    display: false
+                 },
+                 tooltips: {
+                    enabled: true,
+                 },
+                 elements: {
+                    point: {
+                      backgroundColor: "rgba(0,0,255,1.0)",
+                      radius: 5,
+                      hoverRadius: 10,
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                        labels: {
+                            // This more specific font property overrides the global property
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+
+</script>
+
+<script src="{% static 'js/test.js' %}"></script>
+
+<script>
     const xValues = [50,60,70,80,90,100,110,120,130,140,150];
     const yValues = [7,8,8,9,9,9,10,11,14,14,15];
 
@@ -130,15 +185,7 @@
         }]
     }
     });
-
 </script>
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-
-<script src="{% static 'js/test.js' %}"></script>
-
-
 
 
 

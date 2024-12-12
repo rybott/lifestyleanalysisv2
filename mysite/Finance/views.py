@@ -1,15 +1,24 @@
 from django.shortcuts import render
-from django.db.models import Sum
-# from django.db.models import F
+from django.db.models import Sum, F, Func
 from datetime import timedelta, date, datetime
 import calendar
 import json
 from django.db.models.functions import Round
 import plotly.express as px
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, ExtractYear, ExtractMonth
+from decimal import Decimal
 
 from .models import Transactions, Categories
 from .apis import category_names, top_expenses
+
+def convert_decimal_to_float(data):
+    if isinstance(data, Decimal):
+        return float(data)
+    elif isinstance(data, list):  # Handle lists recursively
+        return [convert_decimal_to_float(item) for item in data]
+    elif isinstance(data, dict):  # Handle dictionaries recursively
+        return {key: convert_decimal_to_float(value) for key, value in data.items()}
+    return data
 
 def base_testing(request):
     context = {}
@@ -48,7 +57,7 @@ def dashboard3(request):
     Amount_Spent_total = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, amount__lt=0)
     Amount_Spent_week1 = Transactions.objects.filter(date__gte=week1_start, date__lte=today, amount__lt=0)
     Amount_Spent_week0 = Transactions.objects.filter(date__gte=week0_start, date__lte=week1_start, amount__lt=0)
-    transactions = Amount_Spent_total
+    transactions = Transactions.objects.filter(date__gte=start_date, date__lte=end_date, amount__lt=0)
 
     if category:
         worked = "It Worked " + str(category)
@@ -94,48 +103,33 @@ def dashboard3(request):
         spaces = "." * (25 - len(item['category_name']))
         item['category_name'] = item['category_name'] + spaces
 
+    # -----------Chart------------------------------------------
+
     Chart_type= request.GET.get('chart_type', 'Weekly')
 
     daily_totals = transactions.annotate(day=TruncDay('date')).values('day').annotate(total_amount=Sum('amount')).order_by('day')
 
-    weekly_totals = transactions.annotate(
-        week_start=TruncWeek('date')  # Truncate to the beginning of the week
-    ).values('week_start').annotate( total_amount=Sum('amount'))
+    weekly_totals = transactions.annotate(week=TruncWeek('date')).values('week').annotate(total_amount=Sum('amount')).order_by('week')
 
-    monthly_totals = transactions.annotate(
-        month_start=TruncMonth('date'), year=ExtractYear('date'),month=ExtractMonth('date')).values('year', 'month').annotate(
-        total_amount=Sum('amount'))
+    monthly_totals = transactions.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=Sum('amount')).order_by('month')
 
     if Chart_type == "Daily":
-        dates = [entry['day'] for entry in daily_totals]
-        totals = [entry['total_amount']*-1 for entry in daily_totals]
+        dates = [entry['day'].strftime('%Y-%m-%d') for entry in daily_totals]
+        totals = [float(entry['total_amount']) * -1 for entry in daily_totals]
 
     elif Chart_type == "Monthly":
-        dates = []
-        totals = []
-        for entry in monthly_totals:
-            year = entry['year']
-            month = entry['month']
-            last_day = calendar.monthrange(year, month)[1]
-            last_day_of_month = date(year, month, last_day)
-            dates.append(f"{calendar.month_name[month]} {year}")
-            totals.append(entry['total_amount']*-1)
+        dates = [entry['month'].strftime('%Y-%m-%d') for entry in monthly_totals]
+        totals = [float(entry['total_amount']) * -1 for entry in monthly_totals]
 
     else:
-        # Prepare data for weekly chart
-        dates = []
-        totals = []
-        for entry in weekly_totals:
-            week_start = entry['week_start']
-            week_end = week_start + timedelta(days=6)  # Get the end of the week (Sunday)
-            week_range = f"{week_start.strftime('%b %d, %Y')} - {week_end.strftime('%b %d, %Y')}"
-            dates.append(week_range)
-            totals.append(entry['total_amount']*-1)
+        dates = [entry['week'].strftime('%Y-%m-%d') for entry in weekly_totals]
+        totals = [float(entry['total_amount']) * -1 for entry in weekly_totals]
 
     chart_data = {
         'labels': dates,
         'totals': totals
     }
+
 
     context['categories_amount'] = categories_amount
     context['selected_category'] = category
@@ -150,7 +144,8 @@ def dashboard3(request):
     context['today'] = today
     context['week_start'] = week1_start
     context['exlude_nocount'] = exlude_nocount
-    context['chart_data'] = chart_data
+    context['chart_data'] = json.dumps(chart_data)
+    context['selected_chart_type'] = Chart_type
 
     return render(request, 'dashboard v2.html', context)
 
