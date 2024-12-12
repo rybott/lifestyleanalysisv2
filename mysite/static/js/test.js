@@ -40,3 +40,120 @@ const formContainer = document.getElementById('form-container');
 toggleButton.addEventListener('click', () => {
 formContainer.classList.toggle('active');
 });
+
+// Chart
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById("spendingChart").getContext("2d");
+    const chartData = JSON.parse('{{ chart_data|escapejs }}');
+
+    new Chart(ctx, {
+        type: "line", // Set chart type to line
+        data: {
+            labels: chartData.labels, // Pass the labels from Django
+            datasets: [{
+                label: '',
+                //pointRadius: 10,
+                borderColor: "rgba(0,0,255,1.0)", // Line color
+                data: chartData.totals, // Totals from Django
+                fill: false // Disable fill for pure line graph
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        display: false //this will remove only the label
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        min: Math.min.apply(this, chartData.totals) - Math.min.apply(this, chartData.totals)*.1,
+                        max: Math.max.apply(this, chartData.totals) + Math.min.apply(this, chartData.totals)*.1
+                     }
+                    }]
+
+            },
+            legend: {
+                display: false
+             },
+             tooltips: {
+                enabled: true,
+             },
+             elements: {
+                point: {
+                  backgroundColor: "rgba(0,0,255,1.0)",
+                  radius: 5,
+                  hoverRadius: 10,
+                }
+              },
+              plugins: {
+                legend: {
+                    labels: {
+                        // This more specific font property overrides the global property
+                        font: {
+                            size: 14
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById("spendingChart").getContext("2d");
+    const chartData = JSON.parse('{{ chart_data|escapejs }}');
+
+    new Chart(ctx, {
+        type: "line", // Set chart type to line
+        data: {
+            labels: chartData.labels, // Pass the labels from Django
+            datasets: [{
+                label: '',
+                //pointRadius: 10,
+                borderColor: "rgba(0,0,255,1.0)", // Line color
+                data: chartData.totals, // Totals from Django
+                fill: false // Disable fill for pure line graph
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        display: false //this will remove only the label
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        min: Math.min.apply(this, chartData.totals) - Math.min.apply(this, chartData.totals)*.1,
+                        max: Math.max.apply(this, chartData.totals) + Math.min.apply(this, chartData.totals)*.1
+                        }
+                    }]
+
+            },
+            legend: {
+                display: false
+                },
+                tooltips: {
+                enabled: true,
+                },
+                elements: {
+                point: {
+                    backgroundColor: "rgba(0,0,255,1.0)",
+                    radius: 5,
+                    hoverRadius: 10,
+                }
+                },
+                plugins: {
+                legend: {
+                    labels: {
+                        // This more specific font property overrides the global property
+                        font: {
+                            size: 14
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
