@@ -13,5 +13,4 @@ urlpatterns = [
     path('api/monthly_sums/', apis.monthly_expenses, name='monthly-sums'),
     path('api/amount_made/', apis.amount_made, name='amount_made'),
     path('api/top_expenses/', apis.top_expenses, name='top_expenses'),
-    path('__debug__/', include('debug_toolbar.urls')),
 ]
