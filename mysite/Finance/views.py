@@ -4,7 +4,6 @@ from datetime import timedelta, date, datetime
 import calendar
 import json
 from django.db.models.functions import Round
-import plotly.express as px
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, ExtractYear, ExtractMonth
 from decimal import Decimal
 
