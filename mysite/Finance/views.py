@@ -24,6 +24,9 @@ def base_testing(request):
     return render(request,'base/base.html',context)
 
 def categorize(request):
+
+
+    
     return render(request,'categorize.html',{})
 
 def dashboard3(request):
