@@ -1,0 +1,15 @@
+.header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 1%;
+    background-color: #1c242c;
+    border-radius: 20px;
+    color: white;
+    align-items: flex-end;
+    padding: 4% 2% 1% 2%;
+}
+
+
+.title{
+    font-size: x-large;}

@@ -30,7 +30,7 @@ class News(models.Model):
 
 '''
 # IDs for Categories
-[{'id': 1, 'category': 'Amazon'},
+[{'id': 1, 'category':'Amazon'},
 {'id': 2, 'category': 'Automotive'},
 {'id': 3, 'category': 'Investment'},
 {'id': 4, 'category': 'Clothes'},
@@ -58,7 +58,8 @@ class News(models.Model):
 {'id': 26, 'category': 'Transportation'},
 {'id': 27, 'category': 'Other'},
 {'id': 28, 'category': 'Credit Card Payment'},
-{'id': 29, 'category': 'Do not Count'}]
+{'id': 29, 'category': 'Do not Count'},
+{'id': 30, 'category':'Uncategorized'}]
 
 Reworking the Database
 1. Remove the Categories for Recurring

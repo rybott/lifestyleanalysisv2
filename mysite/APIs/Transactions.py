@@ -4,9 +4,12 @@ from datetime import datetime, timedelta
 import re
 import pandas as pd
 from bs4 import BeautifulSoup
+from pytz import timezone, utc
 
 class Chase:
-    def __init__(self, day):
+    def __init__(self):
+        pass
+    def Get(self,day):
         # Email Server
         imap_server = "imap.gmail.com"
         email_address = "r.bonannibott@gmail.com"
@@ -17,8 +20,13 @@ class Chase:
         # Start End Date
         end_date = datetime.now()
         start_date = end_date - timedelta(days=day)
-        start_str = start_date.strftime("%d-%b-%Y")
-        end_str = (end_date + timedelta(days=1)).strftime("%d-%b-%Y")
+        local_tz = timezone("America/New_York")
+        utc_start_date = local_tz.localize(start_date).astimezone(utc)
+        utc_end_date = local_tz.localize(end_date).astimezone(utc)
+
+        # Correct date string calculations
+        start_str = utc_start_date.strftime("%d-%b-%Y")
+        end_str = (utc_end_date + timedelta(days=1)).strftime("%d-%b-%Y")
 
         # Get Transactions
         imap.select('"Chase Transactions"')
@@ -89,14 +97,19 @@ class Chase:
         'description': descriptions,
         'amount': amounts
         })
-        Transactions_df['category'] = "Uncategorized"
+        Transactions_df['category'] = 30
+
+        with pd.ExcelWriter('Chase.xlsx', engine='xlsxwriter') as writer:
+            Transactions_df.to_excel(writer, sheet_name='Sheet1', index=False)
 
         imap.close()
         imap.logout()
         return Transactions_df
 
 class Discover:
-    def __init__(self, day):
+    def __init__(self):
+        pass
+    def Get(self,day):
         # Email Server
         imap_server = "imap.gmail.com"
         email_address = "r.bonannibott@gmail.com"
@@ -160,8 +173,16 @@ class Discover:
         'description': descriptions,
         'amount': amounts
         })
-        Transactions_df['category'] = "Uncategorized"
+        Transactions_df['category'] = 30
+
+        with pd.ExcelWriter('Discover.xlsx', engine='xlsxwriter') as writer:
+            Transactions_df.to_excel(writer, sheet_name='Sheet1', index=False)
 
         imap.close()
         imap.logout()
         return Transactions_df
+
+Days= 200
+
+Chase().Get(day=Days)
+Discover().Get(day=Days)

@@ -11,55 +11,9 @@
 
 <body>
     <div class="header"  style="padding-top:1%">
-        <div class="title"><b></b>Dashboard<b></b></div>
-        <div class="filtered">
-            <div class="category">{{ selected_category }}</div>
-            <div class="dates">
-                <p><i>{{ selected_start_date }}<i></p>
-                <p><i>{{ selected_end_date }}<i></p>
-            </div>
-        </div>
-        <div class="filter_menu">
-            <div class="toggle-container">
-                <!-- SVG button to toggle the filter menu -->
-                <button id="toggle-button" class="toggle-button">
-                <!-- Replace this with your own SVG -->
-                <img src="{% static 'Assets/SVG/filterv2.svg' %}" alt="Filter">
-                </button>
-
-                <!-- The form to be toggled -->
-                <div id="form-container" class="form-container hidden">
-                <form id="filter-form" method="GET">
-                    <label for="category-name">Category Name:</label>
-                    <select id="category-name" name="Category_name" value="All Categories">
-                        <option value="{{selected_category}}">All Categories</option>
-                        {% for category in category_names %}
-                        <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
-                        {% endfor %}
-                    </select>
-
-                    <label for="start-date">From:</label>
-                    <input type="date" id="start-date" name="start_date" value="{{ selected_start_date }}">
-
-                    <label for="end-date">Until:</label>
-                    <input type="date" id="end-date" name="end_date" value="{{ selected_end_date }}">
-
-                    <select id="Expense_Chart_Filter" name="chart_type">
-                        <option value="Select_Option" selected>Weekly</option>
-                        <option value="Daily">Daily</option>
-                        <option value="Weekly">Weekly</option>
-                        <option value="Monthly">Monthly</option>
-                    </select>
-
-                    <label for="exlude_nocount">"Do Not Count"</label>
-                    <input type="checkbox" id="exlude-nocount" name="exlude_nocount" {{ exlude_nocount }}>
-
-                    <button type="submit">Filter</button>
-                </form>
-                </div>
-            </div>
-        </div>
+        <div class="title"><b></b>Categorize Transactions<b></b></div>
     </div>
+
     <div class="Grid_toprow">
 
     </div>
