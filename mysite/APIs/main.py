@@ -61,6 +61,11 @@ def map_category(description):
 transactions_df ['category_id'] = transactions_df ['description'].apply(map_category)
 transactions_df['date'] = transactions_df['date'].apply(lambda x: make_aware(x) if pd.notna(x) else x)
 
+transactions_df['amount'] = transactions_df.apply(
+    lambda row: row['amount'] * -1 if 'deposit' not in row['description'].lower() else row['amount'],
+    axis=1
+)
+
 # Prepare transactions for bulk insert
 transaction_objects = [
     Transactions(
