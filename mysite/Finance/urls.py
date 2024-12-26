@@ -3,9 +3,9 @@ from . import views
 from . import apis
 
 urlpatterns = [
-    path('base', views.base_testing, name="home"),
+    path('base', views.base_testing, name="hometest"),
     path('', views.dashboard3, name="home"),
-    path('categorize', views.categorize, name="categorize"),
+    path('categorize', views.categorize_transaction, name="categorize_transaction"),
     path('api/category_names/', apis.category_names, name='category-names'),
     path('api/top_5_categories/', apis.top_5_categories, name='top-5-categories'),
     path('api/daily_sums/', apis.daily_expenses, name='daily-sums'),

@@ -1,14 +1,15 @@
-from django.shortcuts import render
-from django.db.models import Sum, F, Func
-from datetime import timedelta, date, datetime
-import calendar
+from django.shortcuts import render,redirect
+from django.db.models import Sum
+from datetime import timedelta,datetime
 import json
 from django.db.models.functions import Round
-from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, ExtractYear, ExtractMonth
+from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
 from decimal import Decimal
+from django.http import JsonResponse
 
 from .models import Transactions, Categories
-from .apis import category_names, top_expenses
+from .forms import TransactionForm
+
 
 def convert_decimal_to_float(data):
     if isinstance(data, Decimal):
@@ -23,11 +24,23 @@ def base_testing(request):
     context = {}
     return render(request,'base/base.html',context)
 
-def categorize(request):
+def categorize_transaction(request):
+    transaction = Transactions.objects.filter(category=30).first()
 
+    if not transaction:
+        # Redirect to a dashboard or another view when no transactions are left
+        return redirect('home')
 
-    
-    return render(request,'categorize.html',{})
+    if request.method == "POST":
+        form = TransactionForm(request.POST, instance=transaction)
+        if form.is_valid():
+            form.save()
+            return redirect('categorize_transaction')
+    else:
+        form = TransactionForm(instance=transaction)
+
+    return render(request, 'categorize.html', {'form': form, 'transaction': transaction})
+
 
 def dashboard3(request):
     context = {}
