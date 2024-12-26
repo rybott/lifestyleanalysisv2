@@ -28,6 +28,8 @@ class Chase:
         start_str = utc_start_date.strftime("%d-%b-%Y")
         end_str = (utc_end_date + timedelta(days=1)).strftime("%d-%b-%Y")
 
+        print('Starting Date: ',start_str,' Ending Date: ',end_str)
+
         # Get Transactions
         imap.select('"Chase Transactions"')
         _, msgnums = imap.search(None, f'(SINCE "{start_str}" BEFORE "{end_str}")')
@@ -182,7 +184,7 @@ class Discover:
         imap.logout()
         return Transactions_df
 
-Days= 200
+Days= 165
 
 Chase().Get(day=Days)
 Discover().Get(day=Days)
