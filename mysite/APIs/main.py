@@ -1,49 +1,65 @@
 import os
-import django
-import pandas as pd
-from django.utils import timezone
-from Finance.models import Transactions
-from Transactions import Chase, Discover
 import sys
+import django
+from django.utils.timezone import make_aware
 
+# Add the project root to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Set up Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 django.setup()
 
+# Your imports
+import pandas as pd
+from Finance.models import Transactions
+from transactions_import import Chase, Discover
+print(f'Chase: {Chase}, Discover: {Discover}')
+from django.db import transaction
+
 
 #--------------- Transaction Data -------------------------------------
 
 # Call Functions for Chase and Discover
-days =  1
+days = 1
+failures = 0
 
 try:
-Chase_data = Chase(days)
-Discover_data = Discover(days)
-transactions_df = pd.concat(['Chase_data','Discover_data'])
-transactions_df['date'] = transactions_df['date'].apply(lambda x: timezone.make_aware(x) if pd.notnull(x) else None)
+    Chase_data = Chase().Get(day=days)
+except Exception as e:
+    print(f'Error in Chase: {e}')
+    Chase_data = pd.DataFrame()
+    failures += 1
 
-min_date = transactions_df['date'].min()
-recent_transactions = Transactions.objects.filter(date__gte=min_date).values_list(
-    'date', 'account', 'transaction_type', 'description', 'amount', 'category_id'
-)
+try:
+    Discover_data = Discover().Get(day=days)
+except Exception as e:
+    print(f'Error in Discover: {e}')
+    Discover_data = pd.DataFrame()
+    failures += 1
+
+if failures == 2:
+    print("System dead")
+    sys.exit(1)
+
+transactions_df = pd.concat([Chase_data,Discover_data])
+
+category_map = pd.read_excel(r"mysite\APIs\AutoCategory.xlsx", header=None, names=['text', 'id'])
+
+mapping_dict = category_map.set_index('text')['id'].to_dict()
+
+def map_category(description):
+    if pd.isna(description):
+        return 30
+    description_lower = description.lower()
+    for text, category_id in mapping_dict.items():
+        if text.lower() in description_lower:
+            return category_id
+    return 30
 
 
-
-
-
-# Convert to a set for faster lookup
-recent_transactions_set = set(recent_transactions)
-
-# Filter out duplicate rows
-recent_transactions_set = set(recent_transactions)
-new_transactions = transactions_df[
-    ~transactions_df.apply(
-        lambda row: (row['date'], row['account'], row['transaction_type'], row['description'], row['amount'], row['category_id'])
-        in recent_transactions_set,
-        axis=1
-    )
-]
+transactions_df ['category_id'] = transactions_df ['description'].apply(map_category)
+transactions_df['date'] = transactions_df['date'].apply(lambda x: make_aware(x) if pd.notna(x) else x)
 
 # Prepare transactions for bulk insert
 transaction_objects = [
@@ -59,6 +75,8 @@ transaction_objects = [
 ]
 
 # Bulk insert transactions into the database
-Transactions.objects.bulk_create(transaction_objects)
+with transaction.atomic():
+    Transactions.objects.bulk_create(transaction_objects)
+
 
 #--------------- News Data -------------------------------------

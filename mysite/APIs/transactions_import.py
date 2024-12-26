@@ -25,6 +25,8 @@ class Chase:
     def __init__(self):
         pass
     def Get(self,day):
+
+
         # Email Server
         imap_server = "imap.gmail.com"
         email_address = "r.bonannibott@gmail.com"
@@ -42,8 +44,6 @@ class Chase:
         # Correct date string calculations
         start_str = utc_start_date.strftime("%d-%b-%Y")
         end_str = (utc_end_date + timedelta(days=1)).strftime("%d-%b-%Y")
-
-        print('Starting Date: ',start_str,' Ending Date: ',end_str)
 
         # Get Transactions
         imap.select('"Chase Transactions"')
@@ -208,9 +208,10 @@ class Discover:
         imap.logout()
         return Transactions_df
 
-Days= 1
+'''
+Days= 6
 
-category_map = pd.read_excel(r"C:\Users\rybot\OneDrive\Desktop\Good Transactions\AutoCategory.xlsx", header=None, names=['text', 'id'])
+category_map = pd.read_excel(r"mysite\APIs\AutoCategory.xlsx", header=None, names=['text', 'id'])
 
 mapping_dict = category_map.set_index('text')['id'].to_dict()
 
@@ -221,6 +222,7 @@ def map_category(description):
             return category_id
     return 30
 
+
 Cdf = Chase().Get(day=Days)
 Ddf = Discover().Get(day=Days)
 
@@ -228,4 +230,7 @@ df = pd.concat([Cdf,Ddf])
 
 df['category_id'] = df['description'].apply(map_category)
 
-print(df)
+print(Cdf.info())
+print(Ddf.info())
+print(df.info())
+'''
