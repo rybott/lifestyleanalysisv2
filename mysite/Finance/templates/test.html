@@ -1,0 +1,46 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <!-- Additional stylesheet specific to this page -->
+    <link rel="stylesheet" href="{% static 'css/finance_dashboard.css' %}">
+{% endblock %}
+
+{% block template %}
+
+
+<body>
+    <div class="header">
+        <div class="title"><b></b>Testing<b></b></div>
+    </div>
+    <div class="Grid_toprow">
+        
+    </div>
+</body>
+
+
+{{ Daily_sums|json_script:"dailySumsData" }}
+{{ Weekly_sums|json_script:"weeklySumsData" }}
+{{ monthly_sums|json_script:"monthlySumsData" }}
+{{ Top_exp|json_script:"topExpensesData" }}
+
+
+<script type="text/javascript">
+    const dailySums = JSON.parse(document.getElementById('dailySumsData').textContent);
+    const weeklySums = JSON.parse(document.getElementById('weeklySumsData').textContent);
+    const monthlySums = JSON.parse(document.getElementById('monthlySumsData').textContent);
+    const topExpenses = JSON.parse(document.getElementById('topExpensesData').textContent);
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/fin_dashboard.js' %}"></script>
+
+
+
+
+
+
+
+
+{% endblock %}

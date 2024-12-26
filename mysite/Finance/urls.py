@@ -4,6 +4,7 @@ from . import apis
 
 urlpatterns = [
     path('base', views.base_testing, name="hometest"),
+    path('test', views.testing, name="test"),
     path('', views.dashboard3, name="home"),
     path('categorize', views.categorize_transaction, name="categorize_transaction"),
     path('api/category_names/', apis.category_names, name='category-names'),

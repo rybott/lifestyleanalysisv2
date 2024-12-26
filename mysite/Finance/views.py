@@ -24,6 +24,10 @@ def base_testing(request):
     context = {}
     return render(request,'base/base.html',context)
 
+def testing(request):
+    context = {}
+    return render(request,'test.html',context)
+
 def categorize_transaction(request):
     transaction = Transactions.objects.filter(category=30).first()
 
