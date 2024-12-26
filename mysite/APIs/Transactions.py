@@ -6,6 +6,21 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from pytz import timezone, utc
 
+def parse_date_with_formats(date_str):
+    formats = [
+        "%b %d, %Y at %I:%M %p ET",  # Abbreviated month with "at" and "ET"
+        "%B %d, %Y at %I:%M %p ET",  # Full month with "at" and "ET"
+        "%b %d, %Y %I:%M %p",        # Abbreviated month without "at" and "ET"
+        "%B %d, %Y %I:%M %p"         # Full month without "at" and "ET"
+    ]
+    for fmt in formats:
+        try:
+            return pd.to_datetime(date_str, format=fmt)
+        except ValueError:
+            continue
+    raise ValueError(f"Date string '{date_str}' does not match any known formats.")
+
+
 class Chase:
     def __init__(self):
         pass
@@ -44,9 +59,6 @@ class Chase:
             typ, data = imap.fetch(msgnum, "(RFC822)")
             message = email.message_from_bytes(data[0][1])
             subject = message['subject']
-            date = message['date']
-            sender = message['from']
-
 
             for part in message.walk():
                 if part.get_content_type() == "text/html":
@@ -86,6 +98,14 @@ class Chase:
                     except:
                         break
 
+            if account_info == "(…3699)" or "(...3699)":
+                account_info = "Chase Debit 3699"
+            elif account_info == "Chase Sapphire Preferred (...9133)":
+                account_info = "Chase Sapphire 9133"
+            else:
+                print("Issue with Account: ", account_info)
+
+
             types.append(transaction_type)
             accounts.append(account_info)
             dates.append(date_info)
@@ -99,10 +119,23 @@ class Chase:
         'description': descriptions,
         'amount': amounts
         })
-        Transactions_df['category'] = 30
 
-        with pd.ExcelWriter('Chase.xlsx', engine='xlsxwriter') as writer:
-            Transactions_df.to_excel(writer, sheet_name='Sheet1', index=False)
+        # Transform Date into Datetime format
+        Transactions_df['date'] = Transactions_df['date'].str.replace(r' at| ET', '', regex=True)
+        Transactions_df['date'] = Transactions_df['date'].apply(parse_date_with_formats)
+
+        # Transform Amount from $ to float
+        # Step 1: Ensure all '$' symbols are removed
+        Transactions_df['amount'] = Transactions_df['amount'].str.replace(r'[$,]', '', regex=True)
+
+        # Step 2: Convert the column to float
+        try:
+            Transactions_df['amount'] = Transactions_df['amount'].astype(float)
+        except ValueError as e:
+            print(f"Error converting to float: {e}")
+            # Identify problematic rows
+            problematic_rows = Transactions_df[~Transactions_df['amount'].str.replace(r'[.]', '', regex=True).str.isnumeric()]
+            print("Problematic rows:\n", problematic_rows)
 
         imap.close()
         imap.logout()
@@ -137,11 +170,6 @@ class Discover:
         for msgnum in msgnums[0].split():
             typ, data = imap.fetch(msgnum, "(RFC822)")
             message = email.message_from_bytes(data[0][1])
-            subject = message['subject']
-            date = message['date']
-            sender = message['from']
-
-
             for part in message.walk():
                 if part.get_content_type() == "text/html":
                     html_content = part.get_payload(decode=True).decode('utf-8')
@@ -153,7 +181,7 @@ class Discover:
 
                         # Assign extracted data
                         transaction_type = "Credit Card Transaction"
-                        account_info = "1234"  # Fixed account info for Credit Card Transaction
+                        account_info = "Discover 1494"
                         transaction_date = datetime.strptime(transaction_date_match.group(1), "%B %d, %Y") if transaction_date_match else None
                         merchant = merchant_match.group(1).strip() if merchant_match else None
                         amount = float(amount_match.group(1)) if amount_match else None
@@ -175,16 +203,29 @@ class Discover:
         'description': descriptions,
         'amount': amounts
         })
-        Transactions_df['category'] = 30
-
-        with pd.ExcelWriter('Discover.xlsx', engine='xlsxwriter') as writer:
-            Transactions_df.to_excel(writer, sheet_name='Sheet1', index=False)
 
         imap.close()
         imap.logout()
         return Transactions_df
 
-Days= 165
+Days= 1
 
-Chase().Get(day=Days)
-Discover().Get(day=Days)
+category_map = pd.read_excel(r"C:\Users\rybot\OneDrive\Desktop\Good Transactions\AutoCategory.xlsx", header=None, names=['text', 'id'])
+
+mapping_dict = category_map.set_index('text')['id'].to_dict()
+
+def map_category(description):
+    description_lower = description.lower()  # Convert description to lowercase
+    for text, category_id in mapping_dict.items():
+        if text.lower() in description_lower:  # Case-insensitive substring matching
+            return category_id
+    return 30
+
+Cdf = Chase().Get(day=Days)
+Ddf = Discover().Get(day=Days)
+
+df = pd.concat([Cdf,Ddf])
+
+df['category_id'] = df['description'].apply(map_category)
+
+print(df)

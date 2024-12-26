@@ -4,6 +4,7 @@ import pandas as pd
 from django.utils import timezone
 from Finance.models import Transactions
 from Transactions import Chase, Discover
+import sys
 
 
 # Set up Django environment
@@ -16,6 +17,7 @@ django.setup()
 # Call Functions for Chase and Discover
 days =  1
 
+try:
 Chase_data = Chase(days)
 Discover_data = Discover(days)
 transactions_df = pd.concat(['Chase_data','Discover_data'])
@@ -25,6 +27,10 @@ min_date = transactions_df['date'].min()
 recent_transactions = Transactions.objects.filter(date__gte=min_date).values_list(
     'date', 'account', 'transaction_type', 'description', 'amount', 'category_id'
 )
+
+
+
+
 
 # Convert to a set for faster lookup
 recent_transactions_set = set(recent_transactions)
