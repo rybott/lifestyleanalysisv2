@@ -22,4 +22,5 @@ urlpatterns = [
     # path('health/', include('Health.urls')),
     path('finance/', include('Finance.urls')),
     path('login/', include('Health.urls')),
+    path('project/', include('Progman.urls')),
 ]
