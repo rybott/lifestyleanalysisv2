@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ note.title }}</title>
+</head>
+<body>
+    <h1>{{ note.title }}</h1>
+    <a href="{% url 'edit_note' note.id %}">Edit Note</a>
+    <div>
+        {{ note.render_html|safe }}
+    </div>
+</body>
+</html>
