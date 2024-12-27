@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'Finance',
     'Health',
     'Admin',
+    'Progman',
 ]
 
 MIDDLEWARE = [
