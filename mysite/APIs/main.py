@@ -44,7 +44,9 @@ if failures == 2:
 
 transactions_df = pd.concat([Chase_data,Discover_data])
 
-category_map = pd.read_excel(r"mysite\APIs\AutoCategory.xlsx", header=None, names=['text', 'id'])
+current_dir = os.path.dirname(os.path.abspath(__file__))
+excel_file_path = os.path.join(current_dir, "AutoCategory.xlsx")
+category_map = pd.read_excel(excel_file_path, header=None, names=['text', 'id'])
 
 mapping_dict = category_map.set_index('text')['id'].to_dict()
 
