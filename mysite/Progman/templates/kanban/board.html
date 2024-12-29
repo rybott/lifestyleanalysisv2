@@ -11,11 +11,10 @@
 
 <body>
     <div class="header"  style="padding-top:1%">
-        <div class="title"><b></b>Categorize Transactions<b></b></div>
+        <div class="title"><b></b>Kanban Board<b></b></div>
     </div>
 
     <section>
-        <h1>Kanban Board</h1>
         <div class="kanban-board">
             {% for level in progress_levels %}
             <div class="kanban-column">
@@ -42,6 +41,7 @@
             border: 1px solid #ccc;
             padding: 10px;
             border-radius: 5px;
+            min-width: 50px;
         }
         .kanban-task {
             background-color: #f9f9f9;
