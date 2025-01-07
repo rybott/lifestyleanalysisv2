@@ -23,4 +23,5 @@ urlpatterns = [
     path('finance/', include('Finance.urls')),
     path('login/', include('Health.urls')),
     path('project/', include('Progman.urls')),
+    path('cal/', include('CalToDo.urls'))
 ]
