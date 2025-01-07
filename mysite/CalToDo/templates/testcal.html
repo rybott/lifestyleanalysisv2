@@ -1,0 +1,206 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <!-- Additional stylesheet specific to this page -->
+    <link rel="stylesheet" href="{% static 'css/finance_dashboard.css' %}">
+{% endblock %}
+
+{% block template %}
+
+<body>
+    <div class="header">
+        <div class="title"><b></b>Testing<b></b></div>
+    </div>
+    <div class="Grid_toprow">
+        <div id="event-modal" class="modal">
+            <div class="modal-content">
+                <h3>Edit Event</h3>
+                <form id="event-form">
+                    <input type="hidden" id="event-id" />
+
+                    <label for="event-title">Title</label>
+                    <input type="text" id="event-title" />
+
+                    <label for="event-start">Start Date</label>
+                    <input type="datetime-local" id="event-start" />
+
+                    <label for="event-end">End Date</label>
+                    <input type="datetime-local" id="event-end" />
+
+                    <label for="event-description">Description</label>
+                    <input type="text" id="event-description"></>
+
+                    <button type="button" onclick="saveEvent()">Save</button>
+                    <button type="button" onclick="deleteEvent()">Delete</button>
+                </form>
+            </div>
+        </div>
+        <div id="calendar"></div>
+    </div>
+</body>
+
+<style>
+    #calendar {
+        background-color: #ffffff; /* White background */
+        width: 90%; /* Full width */
+        padding: 10px; /* Optional: Add padding for spacing */
+        border: 1px solid #ddd; /* Optional: Add a subtle border */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
+    }
+    :root {
+        /* General styles */
+        --fc-small-font-size: 1rem;
+        --fc-page-bg-color: #ffffff; /* Pure white background */
+        --fc-neutral-bg-color: rgba(240, 240, 240, 1); /* Light grey background for non-interactive areas */
+        --fc-neutral-text-color: #606060; /* Medium grey for neutral text */
+        --fc-border-color: #e0e0e0; /* Light grey for borders */
+
+        /* Button styles */
+        --fc-button-text-color: #ffffff; /* White text */
+        --fc-button-bg-color: #007bff; /* Primary blue for buttons */
+        --fc-button-border-color: #007bff;
+        --fc-button-hover-bg-color: #0056b3; /* Darker blue for hover */
+        --fc-button-hover-border-color: #0056b3;
+        --fc-button-active-bg-color: #003f7f; /* Even darker blue for active */
+        --fc-button-active-border-color: #003f7f;
+
+        /* Event styles */
+        --fc-event-bg-color: #4caf50; /* Green background for events */
+        --fc-event-border-color: #4caf50;
+        --fc-event-text-color: #ffffff; /* White text for event titles */
+        --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.15); /* Subtle overlay for selected events */
+
+        /* More link styles */
+        --fc-more-link-bg-color: #f0f0f0; /* Neutral grey */
+        --fc-more-link-text-color: #007bff; /* Link blue */
+
+        /* Event resizer styles */
+        --fc-event-resizer-thickness: 6px;
+        --fc-event-resizer-dot-total-width: 6px;
+        --fc-event-resizer-dot-border-width: 1px;
+
+        /* Non-business hours */
+        --fc-non-business-color: rgba(220, 220, 220, 0.5); /* Slightly darker grey */
+
+        /* Background events */
+        --fc-bg-event-color: #2196f3; /* Blue for background events */
+        --fc-bg-event-opacity: 0.1;
+
+        /* Highlight styles */
+        --fc-highlight-color: rgba(255, 193, 7, 0.2); /* Light yellow for highlights */
+
+        /* Today styles */
+        --fc-today-bg-color: rgba(76, 175, 80, 0.1); /* Light green for the current day */
+
+        /* Now indicator */
+        --fc-now-indicator-color: #ff5722; /* Orange-red for current time indicator */
+    }
+</style>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: '/cal/get-calendar-data/',
+
+            // Enable interactions
+            selectable: true,
+            editable: true,
+
+            // Handle clicking on an event
+            eventClick: function (info) {
+                openEventModal(info.event);
+            },
+
+            // Handle selecting a date
+            select: function (info) {
+                openEventModal({
+                    id: null,
+                    title: '',
+                    description: '',
+                    start: info.startStr,
+                    end: info.endStr,
+                    allDay: info.allDay,
+                });
+            },
+
+            // Handle event changes (dragging, resizing)
+            eventChange: function (info) {
+                saveEventToBackend(info.event);
+            },
+        });
+
+        calendar.render();
+    });
+
+    // Function to open the modal form
+    function openEventModal(event) {
+        // Show the modal
+        document.getElementById('event-modal').classList.add('show');
+
+        // Populate the form with event details
+        document.getElementById('event-title').value = event.title || '';
+        document.getElementById('event-description').value = event.extendedProps.description || '';
+        document.getElementById('event-start').value = event.startStr || '';
+        document.getElementById('event-end').value = event.endStr || '';
+        document.getElementById('event-id').value = event.id || '';
+    }
+
+    // Function to save the event from the modal form
+    function saveEvent() {
+        var eventId = document.getElementById('event-id').value;
+        var eventTitle = document.getElementById('event-title').value;
+        var eventDescription = document.getElementById('event-description').value;
+        var eventStart = document.getElementById('event-start').value;
+        var eventEnd = document.getElementById('event-end').value;
+
+        // Send the data to the backend
+        fetch('/cal/save-event/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'), // Include CSRF token
+            },
+            body: JSON.stringify({
+                id: eventId,
+                title: eventTitle,
+                description: eventDescription,
+                start: eventStart,
+                end: eventEnd,
+            }),
+        }).then(response => {
+            if (response.ok) {
+                response.json().then(data => {
+                    console.log('Event saved successfully:', data);
+                    // Refresh the calendar
+                    window.location.reload();
+                });
+            } else {
+                console.error('Failed to save event.');
+            }
+        });
+    }
+
+    // Helper function to get the CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+
+{% endblock %}
