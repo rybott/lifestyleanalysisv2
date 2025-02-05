@@ -1,7 +1,74 @@
 from django.db import models
 from django.contrib.auth.models import User
-import markdown
 
+class Client(models.Model):
+    name = models.CharField(max_length=250)
+    client = models.CharField(max_length=250)
+    advisary_corp = models.CharField(max_length=250)
+    def __str__(self):
+        return self.name
+
+class MatterStatus(models.Model):
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
+class MatterType(models.Model):
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
+class Status(models.Model):
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
+class Type(models.Model):
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
+
+class Matter(models.Model):
+    name = models.CharField(max_length=250)
+    type = models.ForeignKey(MatterType, on_delete=models.SET_NULL, null=True, blank=True, related_name="matters")
+    client_id = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True, related_name="matters")
+    start_dte = models.DateField(null=True, blank=True)
+    due_dte = models.DateField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    status = models.ForeignKey(MatterStatus, on_delete=models.SET_NULL, null=True, blank=True, related_name="matters")
+    Percent_complete = models.FloatField(null=True, blank=True)
+    final_product = models.FileField(upload_to="documents/", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
+
+
+class Routine(models.Model):
+    name = models.CharField(max_length=250)
+    type = models.ForeignKey(Type, on_delete=models.SET_NULL, null=True, blank=True, related_name="routine")
+    Matter = models.ForeignKey(Matter, on_delete=models.SET_NULL, null=True, blank=True, related_name="routine")
+    start_dte = models.DateField(null=True, blank=True)
+    due_dte = models.DateField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True, related_name="routine")
+    Percent_complete = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
+
+class SubRoutine(models.Model):
+    name = models.CharField(max_length=250)
+    type = models.ForeignKey(Type, on_delete=models.SET_NULL, null=True, blank=True, related_name="subroutine")
+    Task = models.ForeignKey(Matter, on_delete=models.SET_NULL, null=True, blank=True, related_name="subroutine")
+    description = models.TextField(null=True, blank=True)
+    status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True, related_name="subroutine")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
 
 class Progresslvl(models.Model):
     level = models.CharField(max_length=50)
