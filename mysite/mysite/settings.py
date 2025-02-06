@@ -40,8 +40,11 @@ INSTALLED_APPS = [
     'Health',
     'Admin',
     'Progman',
-    'CalToDo'
+    'CalToDo',
+    'crispy_forms'
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
