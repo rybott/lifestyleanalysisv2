@@ -1,3 +1,6 @@
+<script>
+    window.CSRF_TOKEN = "{{ csrf_token }}";
+</script>
 <form id="routine-form">
     {% csrf_token %}
     {{ form.as_p }}

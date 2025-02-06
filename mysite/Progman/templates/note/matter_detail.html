@@ -9,6 +9,9 @@
 {% block template %}
 
 <body>
+    <script>
+        window.CSRF_TOKEN = "{{ csrf_token }}";
+    </script>
     <style>
         .Grid_toprow {
             display: flex;
@@ -88,14 +91,13 @@
                 {% endfor %}
             </ol>
 
-            <div id="data-display">
-                <p>Select a routine or subroutine to see and edit details.</p>
-            </div>
-
 
         </div>
         <div id="TopRowChild" class="thisweeklastweek">
             <h2> Data </h2>
+            <div id="data-display">
+                <p>Select a routine or subroutine to see and edit details.</p>
+            </div>
         </div>
     </div>
 
@@ -117,9 +119,13 @@
                             e.preventDefault();
                             const formData = new FormData(form);
 
+                            // Add CSRF token to the fetch request
                             fetch(url, {
                                 method: 'POST',
                                 body: formData,
+                                headers: {
+                                    'X-CSRFToken': window.CSRF_TOKEN, // Include CSRF token in the headers
+                                },
                             })
                                 .then(response => response.json())
                                 .then(data => {
@@ -140,7 +146,7 @@
         document.querySelectorAll('.routine-item').forEach(item => {
             item.addEventListener('click', function () {
                 const routineId = this.dataset.id;
-                loadForm(`/routine/${routineId}/edit/`);
+                loadForm(`/project/routine/${routineId}/edit/`);
             });
         });
 
@@ -148,11 +154,13 @@
         document.querySelectorAll('.subroutine-item').forEach(item => {
             item.addEventListener('click', function () {
                 const subroutineId = this.dataset.id;
-                loadForm(`/subroutine/${subroutineId}/edit/`);
+                loadForm(`/project/subroutine/${subroutineId}/edit/`);
             });
         });
     });
+
 </script>
+
 
 
 </body>

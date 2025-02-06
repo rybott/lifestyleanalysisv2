@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-import caldav
+# import caldav
 from datetime import datetime, timedelta
-import vobject
+# import vobject
 import json
 import logging
 
