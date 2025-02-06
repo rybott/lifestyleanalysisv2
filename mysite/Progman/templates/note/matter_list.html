@@ -1,0 +1,156 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/matter_all.css' %}">
+{% endblock %}
+
+{% block template %}
+
+<body>
+    <style>
+        .Grid_toprow {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;  /* Ensures spacing between elements */
+            gap: 1%;
+            padding: 0% 1% 0% 1%;}
+
+        #TopRowChild:first-child {
+            flex-basis: 35%;
+            flex-grow: 0;  /* Prevents it from expanding */
+            max-width: 35%;}
+
+        #TopRowChild:last-child {
+            flex-basis: 65%;
+            flex-grow: 0;
+            max-width: 65%;}
+
+        #TopRowChild {
+            color: white;
+            background-color: #1c242c;
+            padding: 1%;
+            border-radius: 25px;}
+
+            /* Style for the calendar container */
+            .calendar {
+                width: 100%; /* Fill the available space */
+                border-collapse: collapse; /* Merge borders for table cells */
+            }
+
+            /* Style for calendar cells (days) */
+            .calendar td, .calendar th {
+                border: 1px solid #4a4a4a; /* Box around each day */
+                text-align: center;
+                vertical-align: top; /* Align content to the top */
+                padding: 10px; /* Add padding */
+                width: calc(100% / 7); /* Uniform width for all days */
+                height: 100px; /* Fixed height for uniform day boxes */
+                position: relative; /* To position task descriptions */
+                height: auto;
+            }
+
+            /* Header row for days (e.g., Mon, Tue) */
+            .calendar th  {
+                background-color: #1c242c; /* Same background color */
+                color: white; /* Text color */
+                font-weight: bold; /* Bold text */
+                padding: 5px; /* Reduce padding to reduce spacing */
+                height: auto; /* Ensure height is determined by content */
+                text-align: center; /* Center align text */
+            }
+
+            /* Empty days in the grid */
+            .calendar .noday {
+                background-color: #1c242c;
+                height: auto;
+            }
+
+            /* Style for tasks inside a day box */
+            .task {
+                display: block;
+                background-color: #f0ad4e; /* Highlight tasks with a yellow background */
+                color: black;
+                font-size: 12px; /* Smaller font size for descriptions */
+                padding: 2px;
+                margin: 2px 0;
+                border-radius: 5px;
+                word-wrap: break-word; /* Ensure text wraps */
+                overflow: hidden; /* Prevent overflowing content */
+                white-space: nowrap; /* Prevent long unbroken text */
+                text-overflow: ellipsis; /* Add ellipsis for overflow */
+            }
+
+            /* Add box around the entire calendar */
+            .calendar-wrapper {
+                border: 2px solid #4a4a4a;
+                border-radius: 8px;
+                padding: 10px;
+                background-color: #2a2e35;
+                color: white;
+            }
+    </style>
+    <div class="header"  style="padding-top:1%">
+        <div class="title"><b></b>All Matters<b></b></div>
+    </div>
+    <div class="Grid_toprow">
+        <div id="TopRowChild" class="totalspentmade" style="width: 30%">
+            <h2 style="margin: 2%;">All Matters</h2>
+            <!-- List all the Matters -->
+            <ul>
+                {% for matter in matters %}
+                    <a style="text-decoration: none; color: white" href="{% url 'matter_detail' matter.pk %}">
+                    <h3 style="margin-bottom: 2px"> {{ matter.name }} </h3> </a>
+                    <div style="margin-top: 0px; font-size:10px;"><i>Due: {{ matter.due_date }}</i></div>
+                    <div style="margin-top: 0px; font-size:14px;">{{ matter.description }}</div>
+                {% endfor %}
+            </ul>
+
+        </div>
+        <div id="TopRowChild" class="thisweeklastweek">
+            <h2 style="margin: 2%;">Tasks for {{ month }}/{{ year }}</h2>
+
+            <div  style="margin: 2%;">
+                <a href="{% url 'matter_list' %}?year={{ year }}&month={{ month|add:'-1' }}" class="btn btn-link" style="text-decoration: none; color: white">Previous Month</a>
+                |
+                <a href="{% url 'matter_list' %}?year={{ year }}&month={{ month|add:'1' }}" class="btn btn-link" style="text-decoration: none; color: white">Next Month</a>
+            </div>
+            <div>
+                {{ calendar|safe }}  <!-- Render the HTML Calendar -->
+            </div>
+        </div>
+    </div>
+
+
+<script src="{% static 'js/test.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const editButtons = document.querySelectorAll('.edit-note-btn');
+        const modal = document.getElementById('edit-note-modal');
+        const form = document.getElementById('edit-note-form');
+
+        editButtons.forEach((button) => {
+            button.addEventListener('click', (event) => {
+                const noteId = event.target.dataset.noteId;
+
+                // Fetch the form content via AJAX
+                fetch(`/notes/edit/${noteId}/`)
+                    .then(response => response.text())
+                    .then(html => {
+                        form.innerHTML = html;
+                        modal.style.display = 'block';
+                    });
+            });
+        });
+
+        // Optional: Close modal on click outside
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+</script>
+</body>
+{% endblock %}

@@ -1,20 +1,12 @@
 from django.contrib import admin
-from .models import Progresslvl, Note, Project, PersonalTask
+from .models import Matter, Routine, SubRoutine, Note, Client, MatterStatus, MatterType, Status, Type
 
-@admin.register(Progresslvl)
-class ProgresslvlAdmin(admin.ModelAdmin):
-    list_display = ('level', 'order')
-
-@admin.register(Note)
-class NoteAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'created_at', 'updated_at')
-
-@admin.register(Project)
-class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user')
-
-@admin.register(PersonalTask)
-class PersonalTaskAdmin(admin.ModelAdmin):
-    list_display = ('project', 'description', 'level', 'priority', 'is_completed', 'order')
-    list_filter = ('level', 'is_completed')
-    search_fields = ('project', 'description')
+admin.site.register(Matter)
+admin.site.register(Routine)
+admin.site.register(SubRoutine)
+admin.site.register(Note)
+admin.site.register(Client)
+admin.site.register(MatterStatus)
+admin.site.register(MatterType)
+admin.site.register(Status)
+admin.site.register(Type)

@@ -1,0 +1,159 @@
+
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/matter_all.css' %}">
+{% endblock %}
+
+{% block template %}
+
+<body>
+    <style>
+        .Grid_toprow {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;  /* Ensures spacing between elements */
+            gap: 1%;
+            padding: 0% 1% 0% 1%;}
+
+        #TopRowChild:first-child {
+            flex-basis: 35%;
+            flex-grow: 0;  /* Prevents it from expanding */
+            max-width: 35%;}
+
+        #TopRowChild:last-child {
+            flex-basis: 65%;
+            flex-grow: 0;
+            max-width: 65%;}
+
+        #TopRowChild {
+            color: white;
+            background-color: #1c242c;
+            padding: 1%;
+            border-radius: 25px;}
+
+            /* Style for the calendar container */
+            .calendar {
+                width: 100%; /* Fill the available space */
+                border-collapse: collapse; /* Merge borders for table cells */
+            }
+
+            ul {
+                list-style-position: inside; /* Move bullets inside the list container */
+                margin: 0; /* Remove default margins */
+                padding-left: 1.5em; /* Add padding for proper alignment */
+            }
+
+            ul li {
+                text-indent: -1.5em; /* Pull the content back to align with the heading */
+                padding: 5px 0; /* Optional: Add some spacing between list items */
+            }
+
+            h3 {
+                margin: 0; /* Remove unnecessary margin */
+            }
+    </style>
+    <div class="header"  style="padding-top:1%">
+        <div class="title"><b>{{ matter.name }}</b></div>
+
+    </div>
+    <p><i>{{ matter.description }}<i></p>
+    <div class="Grid_toprow">
+        <div id="TopRowChild" class="totalspentmade" style="width: 30%">
+            <h2 style="margin: 2%;">Tasks</h2>
+            <!-- List all the Routines-->
+            <ol>
+                {% for routine in matter.routines.all %}
+                    <li style="margin-bottom: 15px">
+                        <h3
+                            class="routine-item"
+                            data-id="{{ routine.id }}"
+                            style="margin-bottom: 5px">
+                            {{ routine.name }}
+                        </h3>
+                        <div style="margin-top: 0px; font-size:10px">
+                            <i>Updated: {{ routine.updated_at }} | Status: {{ routine.status }}</i>
+                        </div>
+                        {% for subroutine in routine.subroutines.all %}
+                            <ul>
+                                <li
+                                    class="subroutine-item"
+                                    data-id="{{ subroutine.id }}">
+                                    {{ subroutine.name }}
+                                </li>
+                            </ul>
+                        {% endfor %}
+                    </li>
+                {% endfor %}
+            </ol>
+
+            <div id="data-display">
+                <p>Select a routine or subroutine to see and edit details.</p>
+            </div>
+
+
+        </div>
+        <div id="TopRowChild" class="thisweeklastweek">
+            <h2> Data </h2>
+        </div>
+    </div>
+
+<script src="{% static 'js/test.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dataDisplay = document.getElementById('data-display');
+
+        function loadForm(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        dataDisplay.innerHTML = data.html;
+
+                        // Add event listener to handle form submission
+                        const form = dataDisplay.querySelector('form');
+                        form.addEventListener('submit', function (e) {
+                            e.preventDefault();
+                            const formData = new FormData(form);
+
+                            fetch(url, {
+                                method: 'POST',
+                                body: formData,
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert(data.message);
+                                    } else {
+                                        alert('Error saving data');
+                                    }
+                                });
+                        });
+                    } else {
+                        alert('Failed to load the form.');
+                    }
+                });
+        }
+
+        // Add click listeners to Routine items
+        document.querySelectorAll('.routine-item').forEach(item => {
+            item.addEventListener('click', function () {
+                const routineId = this.dataset.id;
+                loadForm(`/routine/${routineId}/edit/`);
+            });
+        });
+
+        // Add click listeners to SubRoutine items
+        document.querySelectorAll('.subroutine-item').forEach(item => {
+            item.addEventListener('click', function () {
+                const subroutineId = this.dataset.id;
+                loadForm(`/subroutine/${subroutineId}/edit/`);
+            });
+        });
+    });
+</script>
+
+
+</body>
+{% endblock %}

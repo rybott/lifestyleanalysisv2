@@ -25,3 +25,4 @@ urlpatterns = [
     path('project/', include('Progman.urls')),
     path('cal/', include('CalToDo.urls'))
 ]
+

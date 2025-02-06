@@ -2,7 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('kanban/', views.kanban_board, name='kanban_board'),
-    path('note/<int:note_id>/edit/', views.edit_note, name='edit_note'),
-    path('task/<int:task_id>/notes/', views.task_notes, name='task_notes'),
+    path('matters/', views.MatterListView.as_view(), name='matter_list'),
+    path('matters/<int:pk>/', views.MatterDetailView.as_view(), name='matter_detail'),
+    path('project/routine/<int:pk>/edit/', views.load_routine_form, name='edit_routine'),
+    path('project/subroutine/<int:pk>/edit/', views.load_subroutine_form, name='edit_subroutine'),
 ]

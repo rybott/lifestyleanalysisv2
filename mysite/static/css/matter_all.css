@@ -1,0 +1,174 @@
+
+.form-container {
+    display: none; /* Start hidden and toggle visibility */
+    position: absolute;
+    right: 0; /* Align the form to the right edge of the toggle-container */
+    padding: 20px;
+    border-radius: 10px;
+    width: 250px; /* Fixed width */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Optional: adds shadow for better visibility */
+}
+
+.form-container.active {
+    background-color: #c0c1c4;
+    display: block; /* Show when active */
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="date"], select {
+    padding: 10px;
+    margin: 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    width: 95%; /* Ensures inputs take full width of the form */
+}
+
+.toggle-button{
+    border: none;
+    background-color: #a78f21;
+    border-radius: 15%;
+    margin: 0%;
+    padding: 0%;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    font-size: 20px;
+    width: 100%; /* Full width button */
+    border: none;
+    border-radius: 10px;
+    padding: 10px /* Padding for better touch */
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 1%;
+    background-color: #1c242c;
+    border-radius: 20px;
+    color: white;
+    align-items: flex-end;
+    padding: 4% 2% 1% 2%;
+}
+
+
+.title{
+    font-size: x-large;}
+.filtered{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;}
+.category{
+    font-size: large;
+}
+.dates{
+    display: flex;
+    flex-direction: row;
+    column-gap: 1vw;
+    }
+.dates p{
+    margin: 0;
+}
+
+
+/*
+Body Information
+---------------------------------------
+*/
+
+.Grid_toprow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;  /* Ensures spacing between elements */
+    gap: 1%;
+    padding: 0% 1% 0% 1%;
+}
+
+#TopRowChild:first-child {
+    flex-basis: 30%;
+    flex-grow: 0;  /* Prevents it from expanding */
+    max-width: 30%;
+}
+
+#TopRowChild:last-child {
+    flex-basis: 70%;
+    flex-grow: 0;
+    max-width: 70%;
+}
+
+#TopRowChild {
+    color: white;
+    background-color: #1c242c;
+    padding: 1%;
+    border-radius: 25px;
+}
+
+
+
+#TopRowChild p{
+    margin: 0;
+    padding-left: 10%;
+}
+
+/* Style for calendar cells (days) */
+.calendar td, .calendar th {
+    border: 1px solid #4a4a4a; /* Box around each day */
+    text-align: center;
+    vertical-align: top; /* Align content to the top */
+    padding: 10px; /* Add padding */
+    width: calc(100% / 7); /* Uniform width for all days */
+    height: 100px; /* Fixed height for uniform day boxes */
+    position: relative; /* To position task descriptions */
+    height: auto;
+}
+
+/* Header row for days (e.g., Mon, Tue) */
+.calendar th  {
+    background-color: #1c242c; /* Same background color */
+    color: white; /* Text color */
+    font-weight: bold; /* Bold text */
+    padding: 5px; /* Reduce padding to reduce spacing */
+    height: auto; /* Ensure height is determined by content */
+    text-align: center; /* Center align text */
+}
+
+/* Empty days in the grid */
+.calendar .noday {
+    background-color: #1c242c;
+    height: auto;
+}
+
+/* Style for tasks inside a day box */
+.task {
+    display: block;
+    background-color: #f0ad4e; /* Highlight tasks with a yellow background */
+    color: black;
+    font-size: 12px; /* Smaller font size for descriptions */
+    padding: 2px;
+    margin: 2px 0;
+    border-radius: 5px;
+    word-wrap: break-word; /* Ensure text wraps */
+    overflow: hidden; /* Prevent overflowing content */
+    white-space: nowrap; /* Prevent long unbroken text */
+    text-overflow: ellipsis; /* Add ellipsis for overflow */
+}
+
+/* Add box around the entire calendar */
+.calendar-wrapper {
+    border: 2px solid #4a4a4a;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #2a2e35;
+    color: white;
+}
